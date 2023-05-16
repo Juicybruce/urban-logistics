@@ -2,71 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 
-import 'constants.dart';
-import 'navBar.dart';
+class addVehicle extends StatefulWidget {
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  Supabase.initialize(
-    url: Constants.supabaseUrl,
-    anonKey: Constants.supabaseAnonKey,
-  );
-
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        appBarTheme: AppBarTheme(
-          color: Colors.pinkAccent,
-        ),
-        bottomAppBarTheme: BottomAppBarTheme(
-          color: Colors.pinkAccent,
-        ),
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: Colors.purple,
-        ),
-      ),
-      debugShowCheckedModeBanner: false, //REMOVES THE DEBUG BANNER
-
-      home: const navBar(),
-    );
-  }
-}
-
-
-// add truck page that has a form to add a truck in a diloge box with a button to add a truck to the database
-
-class AddTruck extends StatefulWidget {
-
-  const AddTruck({super.key});
+  const addVehicle({super.key});
 
   @override
-  State<AddTruck> createState() => _AddTruckState();
+  State<addVehicle> createState() => _addVehicleState();
 }
 
-class _AddTruckState extends State<AddTruck> {
+class _addVehicleState extends State<addVehicle> {
   //supabase client
   final SupabaseClient _client = Supabase.instance.client;
   final _formKey = GlobalKey<FormState>();
-
   var _licensePlateController = TextEditingController();
   var _truckTypeController = TextEditingController();
   var _truckCapacityController = TextEditingController();
@@ -180,10 +127,3 @@ class _AddTruckState extends State<AddTruck> {
     );
   }
 }
-
-
-
-
-
-
-
