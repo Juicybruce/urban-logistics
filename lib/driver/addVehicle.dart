@@ -14,7 +14,6 @@ class _addVehicleState extends State<addVehicle> {
   //supabase client
   final SupabaseClient _client = Supabase.instance.client;
   final _formKey = GlobalKey<FormState>();
-
   var _licensePlateController = TextEditingController();
   var _truckTypeController = TextEditingController();
   var _truckCapacityController = TextEditingController();
