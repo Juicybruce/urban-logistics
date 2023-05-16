@@ -23,6 +23,15 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        appBarTheme: AppBarTheme(
+          color: Colors.pinkAccent,
+        ),
+        bottomAppBarTheme: BottomAppBarTheme(
+          color: Colors.pinkAccent,
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Colors.purple,
+        ),
       ),
       debugShowCheckedModeBanner: false, //REMOVES THE DEBUG BANNER
 
