@@ -23,7 +23,7 @@ class _navBarState extends State<navBar> {
 
   int currentTab = 0;
 
-  String userType = "merchant"; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
+  String userType = "yy"; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
 
   late List<Widget> screens = getScreens(userType);
 
