@@ -19,8 +19,7 @@ class _changeVehicleState extends State<changeVehicle> {
   bool isSelectionMode = false;
   final int listLength = 30;
   late List<bool> _selected;
-  bool _selectAll = false;
-  bool _isGridMode = false;
+
 
   @override
   void initState() {
@@ -30,7 +29,7 @@ class _changeVehicleState extends State<changeVehicle> {
 
   @override
   Widget build(BuildContext context) {
-    var newRecord;
+    PostgrestResponse newRecord;
     return Scaffold(
       appBar: AppBar(
         title: Text('Change Vehicle'),
@@ -59,18 +58,31 @@ class _changeVehicleState extends State<changeVehicle> {
                   .select()
                   .execute()
                   .asStream(),
-              builder: (context, snapshot) {
+              builder: (BuildContext context, AsyncSnapshot<PostgrestResponse> snapshot) {
                 if (snapshot.hasError) {
                   return const Text('Error');
                 } else if (snapshot.hasData) {
                   final List<dynamic> data = snapshot.data!.data as List<dynamic>;
                   return ListView.builder(
                     itemCount: data.length,
-                    itemBuilder: (context, index) {
+                    itemBuilder: (BuildContext context, int index) {
                       final Map<String, dynamic> vehicle = data[index] as Map<String, dynamic>;
                       return ListTile(
                         title: Text(vehicle['license_plate'].toString()),
                         subtitle: Text(vehicle['truck_type'].toString()),
+                        //button to make set the drivers active vehicle to the selected vehicle
+                          trailing: ElevatedButton(
+                          onPressed: () async {
+                            //update the driver's active vehicle
+                            newRecord = await _client.from('drivers').update({'current_vehicle': vehicle['truck_id']}).eq('driver_id', 1).execute();
+                            //update the
+                            setState(() {});
+                          },
+                          child: Text('Select'),
+                        ),
+
+
+
                         //show details on onTap
                         onTap: () {
                           showDialog(
