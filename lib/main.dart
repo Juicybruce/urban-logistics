@@ -34,6 +34,15 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        appBarTheme: AppBarTheme(
+          color: Colors.pinkAccent,
+        ),
+        bottomAppBarTheme: BottomAppBarTheme(
+          color: Colors.pinkAccent,
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Colors.purple,
+        ),
       ),
       debugShowCheckedModeBanner: false, //REMOVES THE DEBUG BANNER
 
