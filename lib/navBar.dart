@@ -23,7 +23,7 @@ class _navBarState extends State<navBar> {
 
   int currentTab = 0;
 
-  String userType = "driver"; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
+  String userType = "merchant"; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
 
   late List<Widget> screens = getScreens(userType);
 
@@ -164,17 +164,10 @@ class _navBarState extends State<navBar> {
         ],
       );
     } else  {
-      return buildAppBarDriver();
-    }
-  }
-
-  AppBar buildAppBarDriver() {
-    if (driverAvailable) {
       return AppBar(
-        backgroundColor: Colors.green,
         centerTitle: true,
-        title: Column(children: [
-          Text("DRIVER NAME", style: TextStyle(fontWeight: FontWeight.bold),),
+        title: Column( children: [
+          Text("DRIVER NAME",style: TextStyle(fontWeight: FontWeight.bold),),
           Text("<vehicle rego number>", style: TextStyle(fontSize: 13)),
         ],),
         backgroundColor: Colors.pinkAccent,
@@ -182,7 +175,7 @@ class _navBarState extends State<navBar> {
           PopupMenuButton(
             // add icon, by default "3 dot" icon
             //icon: Icon(Icons.book),
-              itemBuilder: (context) {
+              itemBuilder: (context){
                 return [
                   PopupMenuItem<int>(
                     value: 0,
@@ -198,75 +191,12 @@ class _navBarState extends State<navBar> {
                   ),
                 ];
               },
-              onSelected: (value) {
-                if (value == 0) {
-                  setState(() {
-                    driverAvailable = true;
-                    //TODO: set driver to available in db
-                  });
+              onSelected:(value){
+                if(value == 0){
                   print("IM AVAILABLE.");
-                } else if (value == 1) {
-                  setState(() {
-                    driverAvailable = false;
-                    //TODO: set driver to unavailable in db
-                  });
+                }else if(value == 1){
                   print("IM UNAVAILABLE.");
-                } else if (value == 2) {
-                  setState(() {
-                    driverAvailable = false;
-                    //TODO: set driver to unavailable in db
-                  });
-                  print("IM LOGGING OUT");
-                }
-              }
-          ),
-        ],
-      );
-    }else{
-      return AppBar(
-        centerTitle: true,
-        title: Column(children: [
-          Text("DRIVER NAME", style: TextStyle(fontWeight: FontWeight.bold),),
-          Text("<vehicle rego number>", style: TextStyle(fontSize: 13)),
-        ],),
-        actions: [
-          PopupMenuButton(
-            // add icon, by default "3 dot" icon
-            //icon: Icon(Icons.book),
-              itemBuilder: (context) {
-                return [
-                  PopupMenuItem<int>(
-                    value: 0,
-                    child: Text("Set Available"),
-                  ),
-                  PopupMenuItem<int>(
-                    value: 1,
-                    child: Text("Set Unavailable"),
-                  ),
-                  PopupMenuItem<int>(
-                    value: 2,
-                    child: Text("Sign Out"),
-                  ),
-                ];
-              },
-              onSelected: (value) {
-                if (value == 0) {
-                  setState(() {
-                    driverAvailable = true;
-                    //TODO: set driver to available in db
-                  });
-                  print("IM AVAILABLE.");
-                } else if (value == 1) {
-                  setState(() {
-                    driverAvailable = false;
-                    //TODO: set driver to unavailable in db
-                  });
-                  print("IM UNAVAILABLE.");
-                } else if (value == 2) {
-                  setState(() {
-                    driverAvailable = false;
-                    //TODO: set driver to unavailable in db
-                  });
+                }else if(value == 2){
                   print("IM LOGGING OUT");
                 }
               }
@@ -277,7 +207,7 @@ class _navBarState extends State<navBar> {
   }
 
   FloatingActionButton buildFloatingActionButton() {
-    if(userType == "merchant"){
+    if(userType == "C"){
       return FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => newPost()));
