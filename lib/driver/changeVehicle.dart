@@ -3,7 +3,6 @@ import 'package:supabase/src/supabase_stream_builder.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import'addVehicle.dart';
 
-
 class changeVehicle extends StatefulWidget {
   const changeVehicle({Key? key}) : super(key: key);
 
@@ -14,26 +13,22 @@ class changeVehicle extends StatefulWidget {
 class _changeVehicleState extends State<changeVehicle> {
   final SupabaseClient _client = Supabase.instance.client;
   //get the data from the database real time
-  
-  var currentVehicle;
+
+  //update the list when there is a change in the database
+
   bool isSelectionMode = false;
   final int listLength = 30;
-
   late List<bool> _selected;
-
 
 
   @override
   void initState() {
     super.initState();
     _selected = List<bool>.generate(listLength, (int index) => false);
-    currentVehicle = readData();
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     PostgrestResponse newRecord;
     return Scaffold(
       appBar: AppBar(
@@ -76,24 +71,19 @@ class _changeVehicleState extends State<changeVehicle> {
                         title: Text(vehicle['license_plate'].toString()),
                         subtitle: Text(vehicle['truck_type'].toString()),
                         //button to make set the drivers active vehicle to the selected vehicle
-                        //   trailing: ElevatedButton(
-                        //   onPressed: () async {
-                        //     //update the driver's active vehicle
-                        //     newRecord = await _client.from('drivers').update({'current_vehicle': vehicle['truck_id']}).eq('driver_id', 1).execute();
-                        //     //update the
-                        //     setState(() {});
-                        //   },
-                        //   child: Text('Select'),
-                        // ),
-
-
-                          trailing: test (vehicle,currentVehicle[0]),
+                          trailing: ElevatedButton(
+                          onPressed: () async {
+                            //update the driver's active vehicle
+                            newRecord = await _client.from('drivers').update({'current_vehicle': vehicle['truck_id']}).eq('driver_id', 1).execute();
+                            //update the
+                            setState(() {});
+                          },
+                          child: Text('Select'),
+                        ),
 
 
 
-
-
-                          //show details on onTap
+                        //show details on onTap
                         onTap: () {
                           showDialog(
                             context: context,
@@ -137,51 +127,4 @@ class _changeVehicleState extends State<changeVehicle> {
       ),
     );
   }
-
-  Widget test(Map<String, dynamic> vehicle, currentVehicle) {
-    //get the driver's active vehicle from
-
-    print(currentVehicle['current_vehicle']);
-    print(vehicle['truck_id']);
-
-
-    
-    //if the vehicle is the driver's active vehicle from database
-    //print the vehicle id from database
-
-
-    if (currentVehicle['current_vehicle'] == vehicle['truck_id']) {
-      // show a active vehicle icon
-      return Icon(Icons.check);
-    }
-    else {
-      return ElevatedButton(
-        onPressed: () async {
-          //update the driver's active vehicle
-          //     newRecord = await _client.from('drivers').update({'current_vehicle': vehicle['truck_id']}).eq('driver_id', 1).execute();
-
-          final newRecord = await _client.from('drivers').update({'current_vehicle': vehicle['truck_id']}).eq('driver_id', 1).execute();
-          //update the
-          setState(() {});
-          //update currentVehicle variable
-          currentVehicle = readData();
-
-        },
-        child: Text('Select'),
-      );
-    }
-  }
-  Future<void> readData() async {
-    var response = await _client
-        .from('drivers')
-        .select('current_vehicle')
-        .eq('driver_id', 1)
-        .execute();
-    setState(() {
-      currentVehicle = response.data.toList();
-    });
-  }
-
 }
-
-//get the driver's active vehicle from database
