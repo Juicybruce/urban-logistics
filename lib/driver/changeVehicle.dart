@@ -75,17 +75,7 @@ class _changeVehicleState extends State<changeVehicle> {
                       return ListTile(
                         title: Text(vehicle['license_plate'].toString()),
                         subtitle: Text(vehicle['truck_type'].toString()),
-                        //button to make set the drivers active vehicle to the selected vehicle
-                        //   trailing: ElevatedButton(
-                        //   onPressed: () async {
-                        //     //update the driver's active vehicle
-                        //     newRecord = await _client.from('drivers').update({'current_vehicle': vehicle['truck_id']}).eq('driver_id', 1).execute();
-                        //     //update the
-                        //     setState(() {});
-                        //   },
-                        //   child: Text('Select'),
-                        // ),
-                        // delay trailing: test (vehicle,currentVehicle[0]),
+
 
 
 
