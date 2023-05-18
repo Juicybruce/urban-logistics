@@ -18,6 +18,7 @@ class _addVehicleState extends State<addVehicle> {
   var _truckTypeController = TextEditingController();
   var _truckCapacityController = TextEditingController();
   var _truckWeightController = TextEditingController();
+  var _insuranceNumberController = TextEditingController();
   bool _isCooling = false;
 
 
@@ -42,6 +43,16 @@ class _addVehicleState extends State<addVehicle> {
               },
             ),
             TextFormField(
+              controller: _insuranceNumberController,
+              decoration: const InputDecoration(labelText: 'Insurance Number'),
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a insurance number';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
               controller: _truckTypeController,
               decoration: const InputDecoration(labelText: 'Truck Type'),
               validator: (String? value) {
@@ -51,6 +62,7 @@ class _addVehicleState extends State<addVehicle> {
                 return null;
               },
             ),
+
             TextFormField(
               controller: _truckCapacityController,
               decoration: const InputDecoration(labelText: 'Truck Capacity (L)'),
@@ -108,6 +120,7 @@ class _addVehicleState extends State<addVehicle> {
                     'space_capacity': _truckCapacityController.text,
                     'weight_capacity': _truckWeightController.text,
                     'cooling_capacity': _isCooling,
+                    'Insurance_number': _insuranceNumberController.text,
                     'driver_id': '1',
                   }
                 ]);

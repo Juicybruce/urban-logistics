@@ -19,14 +19,14 @@ class _changeVehicleState extends State<changeVehicle> {
   bool isSelectionMode = false;
   final int listLength = 30;
 
-  late List<bool> _selected;
+  //late List<bool> _selected;
 
 
 
   @override
   void initState() {
     super.initState();
-    _selected = List<bool>.generate(listLength, (int index) => false);
+    //_selected = List<bool>.generate(listLength, (int index) => false);
     currentVehicle = readData();
 
   }
@@ -34,7 +34,7 @@ class _changeVehicleState extends State<changeVehicle> {
   @override
   Widget build(BuildContext context) {
 
-    PostgrestResponse newRecord;
+    //PostgrestResponse newRecord;
     return Scaffold(
       appBar: AppBar(
         title: Text('Change Vehicle'),
@@ -103,6 +103,7 @@ class _changeVehicleState extends State<changeVehicle> {
                                       Text('Truck Capacity: ' + vehicle['space_capacity'].toString()),
                                       Text('Truck Weight Capacity: ' + vehicle['weight_capacity'].toString()),
                                       Text('Cooling: ' + vehicle['cooling_capacity'].toString()),
+                                      Text('Insurance Number: ' + vehicle['Insurance_number'].toString()),
                                       //delete the vehicle
                                       ElevatedButton(
                                         onPressed: () {
