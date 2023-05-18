@@ -38,6 +38,7 @@ class _changeVehicleState extends State<changeVehicle> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Change Vehicle'),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: Icon(Icons.add),

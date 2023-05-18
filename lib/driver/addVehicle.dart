@@ -53,7 +53,7 @@ class _addVehicleState extends State<addVehicle> {
             ),
             TextFormField(
               controller: _truckCapacityController,
-              decoration: const InputDecoration(labelText: 'Truck Capacity'),
+              decoration: const InputDecoration(labelText: 'Truck Capacity (L)'),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a truck capacity';
@@ -63,7 +63,7 @@ class _addVehicleState extends State<addVehicle> {
             ),
             TextFormField(
               controller: _truckWeightController,
-              decoration: const InputDecoration(labelText: 'Truck Weight'),
+              decoration: const InputDecoration(labelText: 'Truck Weight (KG)'),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a truck weight';

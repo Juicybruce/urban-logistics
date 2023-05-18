@@ -21,9 +21,10 @@ class navBar extends StatefulWidget {
 
 class _navBarState extends State<navBar> {
 
+  bool driverAvailable = false;
   int currentTab = 0;
 
-  String userType = "merchant"; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
+  String userType = "driver"; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
 
   late List<Widget> screens = getScreens(userType);
 
@@ -38,11 +39,10 @@ class _navBarState extends State<navBar> {
         child: currentScreen,
         bucket: bucket,
       ),
-        appBar :buildAppBar(),
+      appBar :buildAppBar(),
       floatingActionButton: buildFloatingActionButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
-        color: Colors.pinkAccent,
         shape: const CircularNotchedRectangle(),
         notchMargin: 5,
         child: Container(
@@ -81,7 +81,7 @@ class _navBarState extends State<navBar> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.list,
-                    color: currentTab == 1 ? Colors.white : Colors.black,),
+                      color: currentTab == 1 ? Colors.white : Colors.black,),
                     Text("   List  ",
                       style: TextStyle(color: currentTab == 1 ? Colors.white : Colors.black),
                     ),
@@ -122,7 +122,7 @@ class _navBarState extends State<navBar> {
                     Icon(Icons.history,
                       color: currentTab == 3 ? Colors.white : Colors.black,),
                     Text("History",
-                    style: TextStyle(color: currentTab == 3 ? Colors.white : Colors.black),
+                      style: TextStyle(color: currentTab == 3 ? Colors.white : Colors.black),
                     ),
                   ],
                 ),
@@ -142,11 +142,10 @@ class _navBarState extends State<navBar> {
           Text("MERCHANT NAME",style: TextStyle(fontWeight: FontWeight.bold),),
           Text("<mechant business name>", style: TextStyle(fontSize: 13)),
         ],),
-        backgroundColor: Colors.pinkAccent,
         actions: [
           PopupMenuButton(
             // add icon, by default "3 dot" icon
-            //icon: Icon(Icons.book),
+              icon: Icon(Icons.menu),
               itemBuilder: (context){
                 return [
                   PopupMenuItem<int>(
@@ -156,7 +155,7 @@ class _navBarState extends State<navBar> {
                 ];
               },
               onSelected:(value){
-              if(value == 0){
+                if(value == 0){
                   print("IM LOGGING OUT");
                 }
               }
@@ -164,18 +163,24 @@ class _navBarState extends State<navBar> {
         ],
       );
     } else  {
+      return buildAppBarDriver();
+    }
+  }
+
+  AppBar buildAppBarDriver() {
+    if (driverAvailable) {
       return AppBar(
+        backgroundColor: Colors.green,
         centerTitle: true,
-        title: Column( children: [
-          Text("DRIVER NAME",style: TextStyle(fontWeight: FontWeight.bold),),
+        title: Column(children: [
+          Text("DRIVER NAME", style: TextStyle(fontWeight: FontWeight.bold),),
           Text("<vehicle rego number>", style: TextStyle(fontSize: 13)),
         ],),
-        backgroundColor: Colors.pinkAccent,
         actions: [
           PopupMenuButton(
-            // add icon, by default "3 dot" icon
-            //icon: Icon(Icons.book),
-              itemBuilder: (context){
+            // add icon, by default "3 dot"
+            icon: Icon(Icons.menu),
+              itemBuilder: (context) {
                 return [
                   PopupMenuItem<int>(
                     value: 0,
@@ -191,12 +196,75 @@ class _navBarState extends State<navBar> {
                   ),
                 ];
               },
-              onSelected:(value){
-                if(value == 0){
+              onSelected: (value) {
+                if (value == 0) {
+                  setState(() {
+                    driverAvailable = true;
+                    //TODO: set driver to available in db
+                  });
                   print("IM AVAILABLE.");
-                }else if(value == 1){
+                } else if (value == 1) {
+                  setState(() {
+                    driverAvailable = false;
+                    //TODO: set driver to unavailable in db
+                  });
                   print("IM UNAVAILABLE.");
-                }else if(value == 2){
+                } else if (value == 2) {
+                  setState(() {
+                    driverAvailable = false;
+                    //TODO: set driver to unavailable in db
+                  });
+                  print("IM LOGGING OUT");
+                }
+              }
+          ),
+        ],
+      );
+    }else{
+      return AppBar(
+        centerTitle: true,
+        title: Column(children: [
+          Text("DRIVER NAME", style: TextStyle(fontWeight: FontWeight.bold),),
+          Text("<vehicle rego number>", style: TextStyle(fontSize: 13)),
+        ],),
+        actions: [
+          PopupMenuButton(
+            // add icon, by default "3 dot" icon
+            icon: Icon(Icons.menu),
+              itemBuilder: (context) {
+                return [
+                  PopupMenuItem<int>(
+                    value: 0,
+                    child: Text("Set Available"),
+                  ),
+                  PopupMenuItem<int>(
+                    value: 1,
+                    child: Text("Set Unavailable"),
+                  ),
+                  PopupMenuItem<int>(
+                    value: 2,
+                    child: Text("Sign Out"),
+                  ),
+                ];
+              },
+              onSelected: (value) {
+                if (value == 0) {
+                  setState(() {
+                    driverAvailable = true;
+                    //TODO: set driver to available in db
+                  });
+                  print("IM AVAILABLE.");
+                } else if (value == 1) {
+                  setState(() {
+                    driverAvailable = false;
+                    //TODO: set driver to unavailable in db
+                  });
+                  print("IM UNAVAILABLE.");
+                } else if (value == 2) {
+                  setState(() {
+                    driverAvailable = false;
+                    //TODO: set driver to unavailable in db
+                  });
                   print("IM LOGGING OUT");
                 }
               }
@@ -207,13 +275,12 @@ class _navBarState extends State<navBar> {
   }
 
   FloatingActionButton buildFloatingActionButton() {
-    if(userType == "k"){
+    if(userType == "merchant"){
       return FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => newPost()));
         },
         child: const Icon(Icons.post_add),
-        backgroundColor: Colors.purple,
       );
     } else {
       return FloatingActionButton(
@@ -221,7 +288,6 @@ class _navBarState extends State<navBar> {
           Navigator.push(context, MaterialPageRoute(builder: (context) => changeVehicle()));
         },
         child: const Icon(Icons.compare_arrows),
-        backgroundColor: Colors.purple,
       );
     }
 
