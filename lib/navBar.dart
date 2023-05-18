@@ -207,7 +207,7 @@ class _navBarState extends State<navBar> {
   }
 
   FloatingActionButton buildFloatingActionButton() {
-    if(userType == "C"){
+    if(userType == "k"){
       return FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => newPost()));

@@ -85,9 +85,14 @@ class _changeVehicleState extends State<changeVehicle> {
                         //   },
                         //   child: Text('Select'),
                         // ),
+                        // delay trailing: test (vehicle,currentVehicle[0]),
+
+
 
 
                         trailing: test (vehicle,currentVehicle[0]),
+
+                        //delete the vehicle
 
 
 
@@ -107,6 +112,78 @@ class _changeVehicleState extends State<changeVehicle> {
                                       Text('Truck Capacity: ' + vehicle['space_capacity'].toString()),
                                       Text('Truck Weight Capacity: ' + vehicle['weight_capacity'].toString()),
                                       Text('Cooling: ' + vehicle['cooling_capacity'].toString()),
+                                      //delete the vehicle
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          //if the vehicle is the driver's active vehicle show a warning
+                                          //else delete the vehicle
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text('Delete Vehicle'),
+                                                content: SingleChildScrollView(
+                                                  child: ListBody(
+                                                    children: const <Widget>[
+                                                      Text('Are you sure you want to delete this vehicle?'),
+                                                    ],
+                                                  ),
+                                                ),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    child: const Text('Yes'),
+                                                    onPressed: () async {
+                                                      if (vehicle['truck_id'] == currentVehicle[0]['current_vehicle']) {
+                                                        final update = await _client.from('drivers').update({'current_vehicle': vehicle[null]}).eq('driver_id', 1);
+                                                        if (update == null) {
+                                                          print('Driver active vehicle set to null');
+                                                        } else {
+                                                          print('Could not set driver active vehicle to null');
+                                                          print(update.message);
+                                                        }
+                                                        final response = await _client.from('trucks').delete().match({'truck_id': vehicle['truck_id']});
+                                                        if (response == null) {
+                                                          print('Vehicle deleted successfully');
+                                                        } else {
+                                                          print('Could not delete vehicle');
+                                                          print(response.error!.message);
+                                                        }
+
+                                                      } else {
+                                                        print('Driver active vehicle not set to null');
+                                                        final response = await _client.from('trucks').delete().match({'truck_id': vehicle['truck_id']});
+                                                        if (response == null) {
+                                                          print('Vehicle deleted successfully');
+                                                        } else {
+                                                          print('Could not delete vehicle');
+                                                          print(response.error!.message);
+                                                        }
+                                                      }
+                                                      //if the vehicle is the driver's active vehicle set the driver's active vehicle to null
+
+
+
+                                                      Navigator.of(context).pop();
+                                                      //close the dialog
+                                                      Navigator.of(context).pop();
+                                                      //refresh the list
+                                                      setState(() {});
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: const Text('No'),
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                          setState(() {});
+                                        },
+                                        child: Text('Delete'),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -139,6 +216,9 @@ class _changeVehicleState extends State<changeVehicle> {
   }
 
   Widget test(Map<String, dynamic> vehicle, currentVehicle) {
+
+
+
     //get the driver's active vehicle from
 
     print(currentVehicle['current_vehicle']);
