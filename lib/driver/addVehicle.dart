@@ -27,8 +27,11 @@ class _addVehicleState extends State<addVehicle> {
     //a dialogue box with a form to add a truck that has a license plate, truck type, truck capacity, truck weight, and cooling drop down
     return AlertDialog(
       title: const Text('Add Truck'),
+      //scrollable: true,
+
       content: Form(
         key: _formKey,
+        child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -103,6 +106,7 @@ class _addVehicleState extends State<addVehicle> {
             ),
           ],
         ),
+      ),
       ),
       actions: [
         TextButton(
