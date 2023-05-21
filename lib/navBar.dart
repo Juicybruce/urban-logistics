@@ -305,7 +305,7 @@ class _navBarState extends State<navBar> {
                   });
                   print('IM LOGGING OUT');
                   supabase.auth.signOut();
-                  Navigator.of(context).pushReplacementNamed('/login');
+                  Navigator.of(context).popAndPushNamed('/login');
                 }
               }),
         ],

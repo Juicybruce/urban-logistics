@@ -48,7 +48,8 @@ class _SplashPageState extends State<SplashPage> {
             children: [
               SvgPicture.asset(
                 iconPath,
-                colorFilter: ColorFilter.mode(Colors.purple, BlendMode.srcIn),
+                colorFilter:
+                    ColorFilter.mode(Colors.pinkAccent, BlendMode.srcIn),
                 semanticsLabel: 'Truck Icon',
               ),
               const SizedBox(height: 20),
