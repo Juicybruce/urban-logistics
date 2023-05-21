@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'constants.dart';
 import 'driver/activeDriver.dart';
 import 'driver/changeVehicle.dart';
 import 'driver/historyDriver.dart';
@@ -16,21 +17,29 @@ class navBar extends StatefulWidget {
 
   @override
   State<navBar> createState() => _navBarState();
-
 }
 
 class _navBarState extends State<navBar> {
-
   bool driverAvailable = false;
   int currentTab = 0;
 
-  String userType = "driver"; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
+  User? user;
+  Session? session;
+
+  @override
+  void initState() {
+    super.initState();
+    user = supabase.auth.currentUser;
+    session = supabase.auth.currentSession;
+  }
+
+  String userType =
+      "driver"; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
 
   late List<Widget> screens = getScreens(userType);
 
   final PageStorageBucket bucket = PageStorageBucket();
   late Widget currentScreen = screens[0];
-
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +48,7 @@ class _navBarState extends State<navBar> {
         child: currentScreen,
         bucket: bucket,
       ),
-      appBar :buildAppBar(),
+      appBar: buildAppBar(),
       floatingActionButton: buildFloatingActionButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
@@ -61,10 +70,14 @@ class _navBarState extends State<navBar> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.map,
-                      color: currentTab == 0 ? Colors.white : Colors.black,),
-                    Text("   Map   ",
-                      style: TextStyle(color: currentTab == 0 ? Colors.white : Colors.black),
+                    Icon(
+                      Icons.map,
+                      color: currentTab == 0 ? Colors.white : Colors.black,
+                    ),
+                    Text(
+                      "   Map   ",
+                      style: TextStyle(
+                          color: currentTab == 0 ? Colors.white : Colors.black),
                     ),
                   ],
                 ),
@@ -80,10 +93,14 @@ class _navBarState extends State<navBar> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.list,
-                      color: currentTab == 1 ? Colors.white : Colors.black,),
-                    Text("   List  ",
-                      style: TextStyle(color: currentTab == 1 ? Colors.white : Colors.black),
+                    Icon(
+                      Icons.list,
+                      color: currentTab == 1 ? Colors.white : Colors.black,
+                    ),
+                    Text(
+                      "   List  ",
+                      style: TextStyle(
+                          color: currentTab == 1 ? Colors.white : Colors.black),
                     ),
                   ],
                 ),
@@ -100,10 +117,14 @@ class _navBarState extends State<navBar> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.directions_car,
-                      color: currentTab == 2 ? Colors.white : Colors.black,),
-                    Text("Activity",
-                      style: TextStyle(color: currentTab == 2 ? Colors.white : Colors.black),
+                    Icon(
+                      Icons.directions_car,
+                      color: currentTab == 2 ? Colors.white : Colors.black,
+                    ),
+                    Text(
+                      "Activity",
+                      style: TextStyle(
+                          color: currentTab == 2 ? Colors.white : Colors.black),
                     ),
                   ],
                 ),
@@ -119,10 +140,14 @@ class _navBarState extends State<navBar> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.history,
-                      color: currentTab == 3 ? Colors.white : Colors.black,),
-                    Text("History",
-                      style: TextStyle(color: currentTab == 3 ? Colors.white : Colors.black),
+                    Icon(
+                      Icons.history,
+                      color: currentTab == 3 ? Colors.white : Colors.black,
+                    ),
+                    Text(
+                      "History",
+                      style: TextStyle(
+                          color: currentTab == 3 ? Colors.white : Colors.black),
                     ),
                   ],
                 ),
@@ -138,15 +163,20 @@ class _navBarState extends State<navBar> {
     if (userType == "merchant") {
       return AppBar(
         centerTitle: true,
-        title: Column( children: [
-          Text("MERCHANT NAME",style: TextStyle(fontWeight: FontWeight.bold),),
-          Text("<mechant business name>", style: TextStyle(fontSize: 13)),
-        ],),
+        title: Column(
+          children: [
+            Text(
+              "MERCHANT NAME",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text("<mechant business name>", style: TextStyle(fontSize: 13)),
+          ],
+        ),
         actions: [
           PopupMenuButton(
-            // add icon, by default "3 dot" icon
+              // add icon, by default "3 dot" icon
               icon: Icon(Icons.menu),
-              itemBuilder: (context){
+              itemBuilder: (context) {
                 return [
                   PopupMenuItem<int>(
                     value: 0,
@@ -154,15 +184,14 @@ class _navBarState extends State<navBar> {
                   ),
                 ];
               },
-              onSelected:(value){
-                if(value == 0){
+              onSelected: (value) {
+                if (value == 0) {
                   print("IM LOGGING OUT");
                 }
-              }
-          ),
+              }),
         ],
       );
-    } else  {
+    } else {
       return buildAppBarDriver();
     }
   }
@@ -172,14 +201,19 @@ class _navBarState extends State<navBar> {
       return AppBar(
         backgroundColor: Colors.green,
         centerTitle: true,
-        title: Column(children: [
-          Text("DRIVER NAME", style: TextStyle(fontWeight: FontWeight.bold),),
-          Text("<vehicle rego number>", style: TextStyle(fontSize: 13)),
-        ],),
+        title: Column(
+          children: [
+            Text(
+              "DRIVER NAME",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text("<vehicle rego number>", style: TextStyle(fontSize: 13)),
+          ],
+        ),
         actions: [
           PopupMenuButton(
-            // add icon, by default "3 dot"
-            icon: Icon(Icons.menu),
+              // add icon, by default "3 dot"
+              icon: Icon(Icons.menu),
               itemBuilder: (context) {
                 return [
                   PopupMenuItem<int>(
@@ -216,21 +250,25 @@ class _navBarState extends State<navBar> {
                   });
                   print("IM LOGGING OUT");
                 }
-              }
-          ),
+              }),
         ],
       );
-    }else{
+    } else {
       return AppBar(
         centerTitle: true,
-        title: Column(children: [
-          Text("DRIVER NAME", style: TextStyle(fontWeight: FontWeight.bold),),
-          Text("<vehicle rego number>", style: TextStyle(fontSize: 13)),
-        ],),
+        title: Column(
+          children: [
+            Text(
+              "DRIVER NAME",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text("<vehicle rego number>", style: TextStyle(fontSize: 13)),
+          ],
+        ),
         actions: [
           PopupMenuButton(
-            // add icon, by default "3 dot" icon
-            icon: Icon(Icons.menu),
+              // add icon, by default "3 dot" icon
+              icon: Icon(Icons.menu),
               itemBuilder: (context) {
                 return [
                   PopupMenuItem<int>(
@@ -266,49 +304,40 @@ class _navBarState extends State<navBar> {
                     //TODO: set driver to unavailable in db
                   });
                   print("IM LOGGING OUT");
+                  supabase.auth.signOut();
+                  Navigator.of(context).pushReplacementNamed('/login');
                 }
-              }
-          ),
+              }),
         ],
       );
     }
   }
 
   FloatingActionButton buildFloatingActionButton() {
-    if(userType == "merchant"){
+    if (userType == "merchant") {
       return FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => newPost()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => newPost()));
         },
         child: const Icon(Icons.post_add),
       );
     } else {
       return FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => changeVehicle()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => changeVehicle()));
         },
         child: const Icon(Icons.compare_arrows),
       );
     }
-
   }
 }
 
 List<Widget> getScreens(String userType) {
   if (userType == "merchant") {
-    return [
-      mapMerchant(),
-      listMerchant(),
-      activeMerchant(),
-      historyMerchant()
-
-    ];
-  } else  {
-    return [
-      mapDriver(),
-      listDriver(),
-      activeDriver(),
-      historyDriver()
-    ];
+    return [mapMerchant(), listMerchant(), activeMerchant(), historyMerchant()];
+  } else {
+    return [mapDriver(), listDriver(), activeDriver(), historyDriver()];
   }
 }
