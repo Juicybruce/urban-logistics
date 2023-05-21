@@ -34,7 +34,7 @@ class _navBarState extends State<navBar> {
   }
 
   String userType =
-      "driver"; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
+      'driver'; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
 
   late List<Widget> screens = getScreens(userType);
 
@@ -75,7 +75,7 @@ class _navBarState extends State<navBar> {
                       color: currentTab == 0 ? Colors.white : Colors.black,
                     ),
                     Text(
-                      "   Map   ",
+                      '   Map   ',
                       style: TextStyle(
                           color: currentTab == 0 ? Colors.white : Colors.black),
                     ),
@@ -98,7 +98,7 @@ class _navBarState extends State<navBar> {
                       color: currentTab == 1 ? Colors.white : Colors.black,
                     ),
                     Text(
-                      "   List  ",
+                      '   List  ',
                       style: TextStyle(
                           color: currentTab == 1 ? Colors.white : Colors.black),
                     ),
@@ -122,7 +122,7 @@ class _navBarState extends State<navBar> {
                       color: currentTab == 2 ? Colors.white : Colors.black,
                     ),
                     Text(
-                      "Activity",
+                      'Activity',
                       style: TextStyle(
                           color: currentTab == 2 ? Colors.white : Colors.black),
                     ),
@@ -145,7 +145,7 @@ class _navBarState extends State<navBar> {
                       color: currentTab == 3 ? Colors.white : Colors.black,
                     ),
                     Text(
-                      "History",
+                      'History',
                       style: TextStyle(
                           color: currentTab == 3 ? Colors.white : Colors.black),
                     ),
@@ -160,33 +160,33 @@ class _navBarState extends State<navBar> {
   }
 
   AppBar buildAppBar() {
-    if (userType == "merchant") {
+    if (userType == 'merchant') {
       return AppBar(
         centerTitle: true,
         title: Column(
-          children: [
+          children: const [
             Text(
-              "MERCHANT NAME",
+              'MERCHANT NAME',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Text("<mechant business name>", style: TextStyle(fontSize: 13)),
+            Text('<mechant business name>', style: TextStyle(fontSize: 13)),
           ],
         ),
         actions: [
           PopupMenuButton(
               // add icon, by default "3 dot" icon
-              icon: Icon(Icons.menu),
+              icon: const Icon(Icons.menu),
               itemBuilder: (context) {
                 return [
-                  PopupMenuItem<int>(
+                  const PopupMenuItem<int>(
                     value: 0,
-                    child: Text("Sign Out"),
+                    child: Text('Sign Out'),
                   ),
                 ];
               },
               onSelected: (value) {
                 if (value == 0) {
-                  print("IM LOGGING OUT");
+                  print('IM LOGGING OUT');
                 }
               }),
         ],
@@ -202,31 +202,31 @@ class _navBarState extends State<navBar> {
         backgroundColor: Colors.green,
         centerTitle: true,
         title: Column(
-          children: [
+          children: const [
             Text(
-              "DRIVER NAME",
+              'DRIVER NAME',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Text("<vehicle rego number>", style: TextStyle(fontSize: 13)),
+            Text('<vehicle rego number>', style: TextStyle(fontSize: 13)),
           ],
         ),
         actions: [
           PopupMenuButton(
               // add icon, by default "3 dot"
-              icon: Icon(Icons.menu),
+              icon: const Icon(Icons.menu),
               itemBuilder: (context) {
                 return [
-                  PopupMenuItem<int>(
+                  const PopupMenuItem<int>(
                     value: 0,
-                    child: Text("Set Available"),
+                    child: Text('Set Available'),
                   ),
-                  PopupMenuItem<int>(
+                  const PopupMenuItem<int>(
                     value: 1,
-                    child: Text("Set Unavailable"),
+                    child: Text('Set Unavailable'),
                   ),
-                  PopupMenuItem<int>(
+                  const PopupMenuItem<int>(
                     value: 2,
-                    child: Text("Sign Out"),
+                    child: Text('Sign Out'),
                   ),
                 ];
               },
@@ -236,19 +236,19 @@ class _navBarState extends State<navBar> {
                     driverAvailable = true;
                     //TODO: set driver to available in db
                   });
-                  print("IM AVAILABLE.");
+                  print('IM AVAILABLE.');
                 } else if (value == 1) {
                   setState(() {
                     driverAvailable = false;
                     //TODO: set driver to unavailable in db
                   });
-                  print("IM UNAVAILABLE.");
+                  print('IM UNAVAILABLE.');
                 } else if (value == 2) {
                   setState(() {
                     driverAvailable = false;
                     //TODO: set driver to unavailable in db
                   });
-                  print("IM LOGGING OUT");
+                  print('IM LOGGING OUT');
                 }
               }),
         ],
@@ -257,31 +257,31 @@ class _navBarState extends State<navBar> {
       return AppBar(
         centerTitle: true,
         title: Column(
-          children: [
+          children: const [
             Text(
-              "DRIVER NAME",
+              'DRIVER NAME',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Text("<vehicle rego number>", style: TextStyle(fontSize: 13)),
+            Text('<vehicle rego number>', style: TextStyle(fontSize: 13)),
           ],
         ),
         actions: [
           PopupMenuButton(
               // add icon, by default "3 dot" icon
-              icon: Icon(Icons.menu),
+              icon: const Icon(Icons.menu),
               itemBuilder: (context) {
                 return [
-                  PopupMenuItem<int>(
+                  const PopupMenuItem<int>(
                     value: 0,
-                    child: Text("Set Available"),
+                    child: Text('Set Available'),
                   ),
-                  PopupMenuItem<int>(
+                  const PopupMenuItem<int>(
                     value: 1,
-                    child: Text("Set Unavailable"),
+                    child: Text('Set Unavailable'),
                   ),
-                  PopupMenuItem<int>(
+                  const PopupMenuItem<int>(
                     value: 2,
-                    child: Text("Sign Out"),
+                    child: Text('Sign Out'),
                   ),
                 ];
               },
@@ -291,19 +291,19 @@ class _navBarState extends State<navBar> {
                     driverAvailable = true;
                     //TODO: set driver to available in db
                   });
-                  print("IM AVAILABLE.");
+                  print('IM AVAILABLE.');
                 } else if (value == 1) {
                   setState(() {
                     driverAvailable = false;
                     //TODO: set driver to unavailable in db
                   });
-                  print("IM UNAVAILABLE.");
+                  print('IM UNAVAILABLE.');
                 } else if (value == 2) {
                   setState(() {
                     driverAvailable = false;
                     //TODO: set driver to unavailable in db
                   });
-                  print("IM LOGGING OUT");
+                  print('IM LOGGING OUT');
                   supabase.auth.signOut();
                   Navigator.of(context).pushReplacementNamed('/login');
                 }
@@ -314,11 +314,11 @@ class _navBarState extends State<navBar> {
   }
 
   FloatingActionButton buildFloatingActionButton() {
-    if (userType == "merchant") {
+    if (userType == 'merchant') {
       return FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => newPost()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const newPost()));
         },
         child: const Icon(Icons.post_add),
       );
@@ -326,7 +326,7 @@ class _navBarState extends State<navBar> {
       return FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => changeVehicle()));
+              MaterialPageRoute(builder: (context) => const changeVehicle()));
         },
         child: const Icon(Icons.compare_arrows),
       );
@@ -335,9 +335,19 @@ class _navBarState extends State<navBar> {
 }
 
 List<Widget> getScreens(String userType) {
-  if (userType == "merchant") {
-    return [mapMerchant(), listMerchant(), activeMerchant(), historyMerchant()];
+  if (userType == 'merchant') {
+    return [
+      const mapMerchant(),
+      const listMerchant(),
+      const activeMerchant(),
+      const historyMerchant()
+    ];
   } else {
-    return [mapDriver(), listDriver(), activeDriver(), historyDriver()];
+    return [
+      const mapDriver(),
+      const listDriver(),
+      const activeDriver(),
+      const historyDriver()
+    ];
   }
 }
