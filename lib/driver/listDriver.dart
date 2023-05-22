@@ -304,7 +304,6 @@ class _listDriverState extends State<listDriver> {
                                         MaterialStateProperty.all(Colors.green),
                                   ),
                                   onPressed: () {
-
                                     _locationInfo();
                                   },
                                   child: const Text(
