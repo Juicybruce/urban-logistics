@@ -34,6 +34,7 @@ class _addVehicleState extends State<addVehicle> {
         child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          
           children: [
             TextFormField(
               controller: _licensePlateController,

@@ -13,6 +13,11 @@ class changeVehicle extends StatefulWidget {
 
 class _changeVehicleState extends State<changeVehicle> {
   final SupabaseClient _client = Supabase.instance.client;
+  final _future = Supabase.instance.client
+      .from('trucks')
+  //select the data from the database
+      .select()
+    .asStream();
   //get the data from the database real time
 
   var currentVehicle;
@@ -59,16 +64,13 @@ class _changeVehicleState extends State<changeVehicle> {
         children: [
           Expanded(
             child: StreamBuilder(
-              stream: Supabase.instance.client
-                  .from('trucks')
-                  .select()
-                  .execute()
-                  .asStream(),
-              builder: (BuildContext context, AsyncSnapshot<PostgrestResponse> snapshot) {
+              //use future builder to get the data from the database
+              stream: _future,
+              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                 if (snapshot.hasError) {
                   return const Text('Error');
                 } else if (snapshot.hasData) {
-                  final List<dynamic> data = snapshot.data!.data as List<dynamic>;
+                  final List<dynamic> data = snapshot.data as List<dynamic>;
                   return ListView.builder(
                     itemCount: data.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -77,17 +79,7 @@ class _changeVehicleState extends State<changeVehicle> {
                         title: Text(vehicle['license_plate'].toString()),
                         subtitle: Text(vehicle['truck_type'].toString()),
 
-
-
-
-
                         trailing: test (vehicle,currentVehicle[0]),
-
-                        //delete the vehicle
-
-
-
-
 
                         //show details on onTap
                         onTap: () {
@@ -114,9 +106,9 @@ class _changeVehicleState extends State<changeVehicle> {
                                             builder: (BuildContext context) {
                                               return AlertDialog(
                                                 title: const Text('Delete Vehicle'),
-                                                content: SingleChildScrollView(
+                                                content: const SingleChildScrollView(
                                                   child: ListBody(
-                                                    children: const <Widget>[
+                                                    children: <Widget>[
                                                       Text('Are you sure you want to delete this vehicle?'),
                                                     ],
                                                   ),
@@ -209,12 +201,10 @@ class _changeVehicleState extends State<changeVehicle> {
 
   Widget test(Map<String, dynamic> vehicle, currentVehicle) {
 
-
-
     //get the driver's active vehicle from
 
-    print(currentVehicle['current_vehicle']);
-    print(vehicle['truck_id']);
+    // print(currentVehicle['current_vehicle']);
+    // print(vehicle['truck_id']);
 
 
 
