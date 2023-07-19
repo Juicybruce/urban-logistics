@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../constants.dart';
+
 
 class addVehicle extends StatefulWidget {
 
@@ -13,6 +15,7 @@ class addVehicle extends StatefulWidget {
 class _addVehicleState extends State<addVehicle> {
   //supabase client
   final SupabaseClient _client = Supabase.instance.client;
+  final String? uEmail = supabase.auth.currentUser!.email;
   final _formKey = GlobalKey<FormState>();
   var _licensePlateController = TextEditingController();
   var _truckTypeController = TextEditingController();
@@ -20,11 +23,29 @@ class _addVehicleState extends State<addVehicle> {
   var _truckWeightController = TextEditingController();
   var _insuranceNumberController = TextEditingController();
   bool _isCooling = false;
+  int? uid;
+
+  //get the user id from the database
+  Future<void> getDriverId() async {
+    final response = await _client.from('drivers').select('driver_id').eq('email',uEmail).execute();
+    final driverId = response.data[0]['id'];
+    print(driverId is int);
+    return driverId;
+  }
 
 
   @override
   Widget build(BuildContext context) {
+
+    final int uid = getDriverId() as int;
+    //print(uid);
+    //uid to int
+
     //a dialogue box with a form to add a truck that has a license plate, truck type, truck capacity, truck weight, and cooling drop down
+   // final  uid = _client;
+    // uid to int PostgrestFilterBuilder<dynamic>
+
+
     return AlertDialog(
       title: const Text('Add Truck'),
       //scrollable: true,
@@ -126,7 +147,7 @@ class _addVehicleState extends State<addVehicle> {
                     'weight_capacity': _truckWeightController.text,
                     'cooling_capacity': _isCooling,
                     'Insurance_number': _insuranceNumberController.text,
-                    'driver_id': '1',
+                    'driver_id': uid
                   }
                 ]);
               } catch (e) {

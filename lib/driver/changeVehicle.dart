@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase/src/supabase_stream_builder.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../constants.dart';
 import'addVehicle.dart';
 
 
@@ -12,33 +13,61 @@ class changeVehicle extends StatefulWidget {
 }
 
 class _changeVehicleState extends State<changeVehicle> {
+  //get current user's vehicle
+  final User? user = supabase.auth.currentUser;
+  //final String? uid = supabase.auth.currentUser!.id;
+  final String? uEmail = supabase.auth.currentUser!.email;
   final SupabaseClient _client = Supabase.instance.client;
+
   final _future = Supabase.instance.client
       .from('trucks')
   //select the data from the database
       .select()
     .asStream();
   //get the data from the database real time
+//print uid to check if it is correct
 
   var currentVehicle;
   bool isSelectionMode = false;
   final int listLength = 30;
-
+  int? uid;
   //late List<bool> _selected;
 
 
-
+// Get the user id from the database
+  Future<void> getDriverId() async {
+    final response = await _client
+        .from('drivers')
+        .select('driver_id')
+        .eq('email', uEmail)
+        .execute();
+    final driverId = response.data[0]['driver_id'];
+    setState(() {
+      uid = int.tryParse(driverId.toString());
+    });
+  }
   @override
   void initState() {
     super.initState();
     //_selected = List<bool>.generate(listLength, (int index) => false);
     currentVehicle = readData();
+    //print(uid);
+    print(currentVehicle);
+    print(uEmail);
+    getDriverId();
+
+
 
   }
 
   @override
   Widget build(BuildContext context) {
+    //retrieve driver id from the driver table using user's email
+    //final uid = _client.from('drivers').select('id').eq('email',uEmail);
 
+    //final uid =  getDriverId();
+    //print(uid);
+    //filter the truck table using the driver id
     //PostgrestResponse newRecord;
     return Scaffold(
       appBar: AppBar(
@@ -71,10 +100,12 @@ class _changeVehicleState extends State<changeVehicle> {
                   return const Text('Error');
                 } else if (snapshot.hasData) {
                   final List<dynamic> data = snapshot.data as List<dynamic>;
+                  //filter the data using the driver id
+                  final List<dynamic> filteredData = data.where((element) => element['driver_id'] == 13).toList();
                   return ListView.builder(
-                    itemCount: data.length,
+                    itemCount: filteredData.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final Map<String, dynamic> vehicle = data[index] as Map<String, dynamic>;
+                      final Map<String, dynamic> vehicle = filteredData[index] as Map<String, dynamic>;
                       return ListTile(
                         title: Text(vehicle['license_plate'].toString()),
                         subtitle: Text(vehicle['truck_type'].toString()),
@@ -118,7 +149,7 @@ class _changeVehicleState extends State<changeVehicle> {
                                                     child: const Text('Yes'),
                                                     onPressed: () async {
                                                       if (vehicle['truck_id'] == currentVehicle[0]['current_vehicle']) {
-                                                        final update = await _client.from('drivers').update({'current_vehicle': vehicle[null]}).eq('driver_id', 1);
+                                                        final update = await _client.from('drivers').update({'current_vehicle': vehicle[null]}).eq('driver_id', uid);
                                                         if (update == null) {
                                                           print('Driver active vehicle set to null');
                                                         } else {
