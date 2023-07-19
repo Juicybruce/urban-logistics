@@ -25,19 +25,28 @@ class _addVehicleState extends State<addVehicle> {
   bool _isCooling = false;
   int? uid;
 
-  //get the user id from the database
+// Get the user id from the database
   Future<void> getDriverId() async {
-    final response = await _client.from('drivers').select('driver_id').eq('email',uEmail).execute();
-    final driverId = response.data[0]['id'];
-    print(driverId is int);
-    return driverId;
+    final response = await _client
+        .from('drivers')
+        .select('driver_id')
+        .eq('email', uEmail)
+        .execute();
+    final driverId = response.data[0]['driver_id'];
+    setState(() {
+      uid = int.tryParse(driverId.toString());
+    });
   }
-
+@override
+  void initState() {
+    getDriverId();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    final int uid = getDriverId() as int;
+    //final int uid = getDriverId() as int;
     //print(uid);
     //uid to int
 

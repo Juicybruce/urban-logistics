@@ -31,8 +31,6 @@ class _changeVehicleState extends State<changeVehicle> {
   bool isSelectionMode = false;
   final int listLength = 30;
   int? uid;
-  //late List<bool> _selected;
-
 
 // Get the user id from the database
   Future<void> getDriverId() async {
@@ -101,7 +99,7 @@ class _changeVehicleState extends State<changeVehicle> {
                 } else if (snapshot.hasData) {
                   final List<dynamic> data = snapshot.data as List<dynamic>;
                   //filter the data using the driver id
-                  final List<dynamic> filteredData = data.where((element) => element['driver_id'] == 13).toList();
+                  final List<dynamic> filteredData = data.where((element) => element['driver_id'] == uid).toList();
                   return ListView.builder(
                     itemCount: filteredData.length,
                     itemBuilder: (BuildContext context, int index) {
