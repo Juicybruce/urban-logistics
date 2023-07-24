@@ -19,7 +19,7 @@ class _changeVehicleState extends State<changeVehicle> {
   final String? uEmail = supabase.auth.currentUser!.email;
   final SupabaseClient _client = Supabase.instance.client;
 
-  final _future = Supabase.instance.client
+  final Stream _future = Supabase.instance.client
       .from('trucks')
   //select the data from the database
       .select()
@@ -34,7 +34,7 @@ class _changeVehicleState extends State<changeVehicle> {
 
 // Get the user id from the database
   Future<void> getDriverId() async {
-    final response = await _client
+    final PostgrestResponse response = await _client
         .from('drivers')
         .select('driver_id')
         .eq('email', uEmail)
@@ -251,7 +251,7 @@ class _changeVehicleState extends State<changeVehicle> {
           //update the driver's active vehicle
           //     newRecord = await _client.from('drivers').update({'current_vehicle': vehicle['truck_id']}).eq('driver_id', 1).execute();
 
-          final newRecord = await _client.from('drivers').update({'current_vehicle': vehicle['truck_id']}).eq('driver_id', 1).execute();
+          final newRecord = await _client.from('drivers').update({'current_vehicle': vehicle['truck_id']}).eq('driver_id', uid);
           //update the
           setState(() {});
           //update currentVehicle variable
@@ -263,10 +263,10 @@ class _changeVehicleState extends State<changeVehicle> {
     }
   }
   Future<void> readData() async {
-    var response = await _client
+    PostgrestResponse response = await _client
         .from('drivers')
         .select('current_vehicle')
-        .eq('driver_id', 1)
+        .eq('driver_id', uid)
         .execute();
     setState(() {
       currentVehicle = response.data.toList();
