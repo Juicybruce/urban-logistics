@@ -43,12 +43,13 @@ class _changeVehicleState extends State<changeVehicle> {
     setState(() {
       uid = int.tryParse(driverId.toString());
     });
+    currentVehicle = readData(uid);
   }
   @override
   void initState() {
     super.initState();
     //_selected = List<bool>.generate(listLength, (int index) => false);
-    currentVehicle = readData();
+
     //print(uid);
     print(currentVehicle);
     print(uEmail);
@@ -60,6 +61,7 @@ class _changeVehicleState extends State<changeVehicle> {
 
   @override
   Widget build(BuildContext context) {
+
     //retrieve driver id from the driver table using user's email
     //final uid = _client.from('drivers').select('id').eq('email',uEmail);
 
@@ -251,18 +253,23 @@ class _changeVehicleState extends State<changeVehicle> {
           //update the driver's active vehicle
           //     newRecord = await _client.from('drivers').update({'current_vehicle': vehicle['truck_id']}).eq('driver_id', 1).execute();
 
-          final newRecord = await _client.from('drivers').update({'current_vehicle': vehicle['truck_id']}).eq('driver_id', uid);
+          final PostgrestResponse newRecord = await _client.from('drivers').update({'current_vehicle': vehicle['truck_id']}).eq('driver_id', uid).execute();
           //update the
           setState(() {});
           //update currentVehicle variable
-          currentVehicle = readData();
+          currentVehicle = readData(uid);
 
         },
         child: Text('Select'),
       );
     }
   }
-  Future<void> readData() async {
+  Future<void> readData(int? uid) async {
+
+    if (uid == null) {
+      print ('uid is null');
+    }
+
     PostgrestResponse response = await _client
         .from('drivers')
         .select('current_vehicle')
