@@ -34,8 +34,8 @@ class _navBarState extends State<navBar> {
   }
 
   String userType =
-      'driver'; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
-
+      //'driver'; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
+      'merchant';
   late List<Widget> screens = getScreens(userType);
 
   final PageStorageBucket bucket = PageStorageBucket();
