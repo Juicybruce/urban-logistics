@@ -43,7 +43,7 @@ class _changeVehicleState extends State<changeVehicle> {
     setState(() {
       uid = int.tryParse(driverId.toString());
     });
-    currentVehicle = readData(uid);
+    readData(uid);
   }
   @override
   void initState() {
@@ -51,17 +51,16 @@ class _changeVehicleState extends State<changeVehicle> {
     //_selected = List<bool>.generate(listLength, (int index) => false);
 
     //print(uid);
-    print(currentVehicle);
+
     print(uEmail);
     getDriverId();
-
+    //print(currentVehicle);
 
 
   }
 
   @override
   Widget build(BuildContext context) {
-
     //retrieve driver id from the driver table using user's email
     //final uid = _client.from('drivers').select('id').eq('email',uEmail);
 
@@ -83,8 +82,6 @@ class _changeVehicleState extends State<changeVehicle> {
                   //after adding a vehicle, refresh the truck list
                 }).then((value) => setState(() {}));
 
-
-
             },
           ),
         ],
@@ -94,7 +91,8 @@ class _changeVehicleState extends State<changeVehicle> {
           Expanded(
             child: StreamBuilder(
               //use future builder to get the data from the database
-              stream: _future,
+               stream: _future,
+
               builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                 if (snapshot.hasError) {
                   return const Text('Error');
@@ -110,7 +108,7 @@ class _changeVehicleState extends State<changeVehicle> {
                         title: Text(vehicle['license_plate'].toString()),
                         subtitle: Text(vehicle['truck_type'].toString()),
 
-                        trailing: test (vehicle,currentVehicle[0]),
+                        trailing: test (vehicle,currentVehicle?.elementAt(0)),
 
                         //show details on onTap
                         onTap: () {
@@ -148,7 +146,7 @@ class _changeVehicleState extends State<changeVehicle> {
                                                   TextButton(
                                                     child: const Text('Yes'),
                                                     onPressed: () async {
-                                                      if (vehicle['truck_id'] == currentVehicle[0]['current_vehicle']) {
+                                                      if (vehicle['truck_id'] == currentVehicle?.elementAt(0)['current_vehicle']) {
                                                         final update = await _client.from('drivers').update({'current_vehicle': vehicle[null]}).eq('driver_id', uid);
                                                         if (update == null) {
                                                           print('Driver active vehicle set to null');
@@ -282,4 +280,4 @@ class _changeVehicleState extends State<changeVehicle> {
 
 }
 
-//get the driver's active vehicle from database
+
