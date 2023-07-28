@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'constants.dart';
 import 'driver/activeDriver.dart';
@@ -11,6 +14,9 @@ import 'merchant/historyMerchant.dart';
 import 'merchant/listMerchant.dart';
 import 'merchant/mapMerchant.dart';
 import 'merchant/newPost.dart';
+import 'dart:async';
+
+import 'pages/splash_page.dart';
 
 class navBar extends StatefulWidget {
   const navBar({Key? key}) : super(key: key);
@@ -20,29 +26,97 @@ class navBar extends StatefulWidget {
 }
 
 class _navBarState extends State<navBar> {
+  bool isLoading = false;
+  bool isMerchant = true; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
   bool driverAvailable = false;
   int currentTab = 0;
-
   User? user;
+
   Session? session;
+  String? email;
+  String? subTitle;
+  Future<String>? _username;
+  String? uname;
 
   @override
   void initState() {
+    isLoading = true;
     super.initState();
     user = supabase.auth.currentUser;
     session = supabase.auth.currentSession;
+    email = user?.email;
+    //_username =
+    xyz();
   }
 
-  String userType =
-      'driver'; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
+  void xyz() async {
+  var response = await supabase
+      .from('suppliers')
+      .select('first_name, last_name, business_name')
+      .eq('email', email);
+  if (response.length == 0){
+    response = await supabase
+        .from('drivers')
+        .select('first_name, last_name, trucks!drivers_current_vehicle_fkey(license_plate)')
+        .eq('email', email);
+    var tempString  = response[0]['trucks'].toString();
+    tempString = tempString.substring(16, tempString.length-1);
+    print(tempString);
+    subTitle = tempString;
+    setState(() {
+      isMerchant = false;
+    });
+  }else{
+    subTitle = response[0]['business_name'].toString();
+  }
+  final String fname = response[0]['first_name'].toString();
+  final String lname = response[0]['last_name'].toString();
+  setState(() {
+    screens = getScreens(isMerchant);
+    currentScreen = screens[currentTab];
+  });
+  uname = "$fname $lname";
+  //await Future.delayed(const Duration(seconds: 3));
+  setState(() {
+    isLoading = false;
+  });
+  //return "$fname $lname";
+  }
 
-  late List<Widget> screens = getScreens(userType);
-
+  late List<Widget> screens = getScreens(isMerchant);
   final PageStorageBucket bucket = PageStorageBucket();
   late Widget currentScreen = screens[0];
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      const String iconPath = 'assets/truck.svg';
+      return  Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      iconPath,
+                      colorFilter:
+                      ColorFilter.mode(Colors.pinkAccent, BlendMode.srcIn),
+                      semanticsLabel: 'Truck Icon',
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Urban Logistics',
+                      style: TextStyle(fontSize: 40),
+                    ),
+                    const SizedBox(height: 20),
+                    CircularProgressIndicator()
+                  ],
+                )),
+          ));
+    }
+
     return Scaffold(
       body: PageStorage(
         child: currentScreen,
@@ -159,18 +233,19 @@ class _navBarState extends State<navBar> {
     );
   }
 
+
   AppBar buildAppBar() {
-    if (userType == 'merchant') {
+    if (isMerchant == true) {
+      print("merchant");
       return AppBar(
         centerTitle: true,
         title: Column(
-          children: const [
-            Text(
-              'MERCHANT NAME',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text('<mechant business name>', style: TextStyle(fontSize: 13)),
-          ],
+            children: [
+          //buildUsername(),
+              //Text(_username, style: TextStyle(fontSize: 13)),
+              Text(uname!, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+             Text(subTitle!, style: TextStyle(fontSize: 13)),
+           ],
         ),
         actions: [
           PopupMenuButton(
@@ -184,9 +259,12 @@ class _navBarState extends State<navBar> {
                   ),
                 ];
               },
+              
               onSelected: (value) {
                 if (value == 0) {
                   print('IM LOGGING OUT');
+                  supabase.auth.signOut();
+                  Navigator.of(context).popAndPushNamed('/login');
                 }
               }),
         ],
@@ -202,12 +280,11 @@ class _navBarState extends State<navBar> {
         backgroundColor: Colors.green,
         centerTitle: true,
         title: Column(
-          children: const [
-            Text(
-              'DRIVER NAME',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text('<vehicle rego number>', style: TextStyle(fontSize: 13)),
+          children: [
+            Text(uname!, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(subTitle!, style: TextStyle(fontSize: 13)),
+            //buildUsername(),
+            //Text('<vehicle rego number>', style: TextStyle(fontSize: 13)),
           ],
         ),
         actions: [
@@ -249,6 +326,8 @@ class _navBarState extends State<navBar> {
                     //TODO: set driver to unavailable in db
                   });
                   print('IM LOGGING OUT');
+                  supabase.auth.signOut();
+                  Navigator.of(context).popAndPushNamed('/login');
                 }
               }),
         ],
@@ -257,12 +336,11 @@ class _navBarState extends State<navBar> {
       return AppBar(
         centerTitle: true,
         title: Column(
-          children: const [
-            Text(
-              'DRIVER NAME',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text('<vehicle rego number>', style: TextStyle(fontSize: 13)),
+          children:  [
+            Text(uname!, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(subTitle!, style: TextStyle(fontSize: 13)),
+            // buildUsername(),
+            // Text('<vehicle rego number>', style: TextStyle(fontSize: 13)),
           ],
         ),
         actions: [
@@ -312,9 +390,37 @@ class _navBarState extends State<navBar> {
       );
     }
   }
+//Obsolete???
+  // FutureBuilder<String> buildUsername() {
+  //   return FutureBuilder<String>(
+  //       future: _username,
+  //       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+  //         List<Widget> children;
+  //         if (snapshot.hasData) {
+  //           children = <Widget>[
+  //             Text(
+  //                 snapshot.data.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+  //           ];
+  //         } else if (snapshot.hasError){
+  //           children = <Widget>[
+  //             // Text(
+  //             //     "ERROR", style: TextStyle(fontSize: 13)),
+  //           ];
+  //         }else {
+  //           children = const <Widget>[];
+  //         }
+  //         return Center(
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: children,
+  //           ),
+  //         );
+  //       }
+  //   );
+  // }
 
   FloatingActionButton buildFloatingActionButton() {
-    if (userType == 'merchant') {
+    if (isMerchant == true) {
       return FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
@@ -334,8 +440,8 @@ class _navBarState extends State<navBar> {
   }
 }
 
-List<Widget> getScreens(String userType) {
-  if (userType == 'merchant') {
+List<Widget> getScreens(bool isMerchant) {
+  if (isMerchant == true) {
     return [
       const mapMerchant(),
       const listMerchant(),
