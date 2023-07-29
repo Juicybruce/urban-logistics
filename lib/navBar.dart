@@ -27,7 +27,7 @@ class navBar extends StatefulWidget {
 
 class _navBarState extends State<navBar> {
   bool isLoading = false;
-  bool isMerchant = true; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
+  bool isMerchant = true;
   bool driverAvailable = false;
   int currentTab = 0;
   User? user;
@@ -46,10 +46,10 @@ class _navBarState extends State<navBar> {
     session = supabase.auth.currentSession;
     email = user?.email;
     //_username =
-    xyz();
+    getUserDetails();
   }
 
-  void xyz() async {
+  Future<void> getUserDetails() async {
   var response = await supabase
       .from('suppliers')
       .select('first_name, last_name, business_name')
@@ -59,9 +59,8 @@ class _navBarState extends State<navBar> {
         .from('drivers')
         .select('first_name, last_name, trucks!drivers_current_vehicle_fkey(license_plate)')
         .eq('email', email);
-    var tempString  = response[0]['trucks'].toString();
-    tempString = tempString.substring(16, tempString.length-1);
-    print(tempString);
+    var tempString  = response[0]['trucks']['license_plate'].toString();
+    print(response[0]['trucks']['license_plate'].toString());
     subTitle = tempString;
     setState(() {
       isMerchant = false;
@@ -236,7 +235,7 @@ class _navBarState extends State<navBar> {
 
   AppBar buildAppBar() {
     if (isMerchant == true) {
-      print("merchant");
+     // print("merchant");
       return AppBar(
         centerTitle: true,
         title: Column(
