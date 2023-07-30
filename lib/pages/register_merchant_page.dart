@@ -205,19 +205,23 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                       final response = await supabase.auth
                           .signUp(email: email, password: password);
 
-                      // TODO: once merchant ID field is a foreign key for the auth ID, and the type is uuid, make sure we are inserting that too
-
-                      await supabase.from('suppliers').upsert([
-                        {
-                          'email': email,
-                          'first_name': firstName,
-                          'last_name': lastName,
-                          'contact_phone': contactNumber,
-                          'business_name': businessName,
-                          'business_registration': ABN,
-                          'billing_details': bankAccountNumber,
-                        }
-                      ]);
+                      if (response.user != null) {
+                        final userId = response.user!.id;
+                        await supabase.from('suppliers').upsert([
+                          {
+                            'supplier_id': userId,
+                            'email': email,
+                            'first_name': firstName,
+                            'last_name': lastName,
+                            'contact_phone': contactNumber,
+                            'business_name': businessName,
+                            'business_registration': ABN,
+                            'billing_details': bankAccountNumber,
+                          }
+                        ]);
+                      } else {
+                        print("Sign-up error: User creation failed.");
+                      }
                     }
                   },
                   child: Text('Submit'),
