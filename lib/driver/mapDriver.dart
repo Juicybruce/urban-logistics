@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-//mapDriver is the screen that shows the driver's location
 
 class mapDriver extends StatefulWidget {
   const mapDriver({Key? key}) : super(key: key);
@@ -9,6 +9,11 @@ class mapDriver extends StatefulWidget {
 }
 
 class _mapDriverState extends State<mapDriver> {
+
+  @override
+  void initState() {
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+
 class activeDriver extends StatefulWidget {
   const activeDriver({Key? key}) : super(key: key);
 
@@ -7,11 +9,15 @@ class activeDriver extends StatefulWidget {
 }
 
 class _activeDriverState extends State<activeDriver> {
+
+  @override
+  void initState() { }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text('Driver Active Screen'),
+        child: Text('Driver Activity Screen'),
       ),
     );
   }

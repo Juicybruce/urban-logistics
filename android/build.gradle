@@ -16,6 +16,12 @@ allprojects {
         google()
         mavenCentral()
     }
+
+    configurations.all{
+        resolutionStrategy{
+            force "com.google.android.gms:play-services-location:21.0.1"
+        }
+    }
 }
 
 rootProject.buildDir = '../build'
