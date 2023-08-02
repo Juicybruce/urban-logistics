@@ -36,10 +36,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   supabase_flutter: ^1.8.0
   flutter_svg: ^2.0.5
-  google_maps_flutter: ^2.2.6
-  geolocator: ^9.0.2
-  geocoding: ^2.1.0
-  location: ^4.4.0
 
 dev_dependencies:
   flutter_test:
