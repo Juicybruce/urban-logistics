@@ -30,7 +30,7 @@ class _changeVehicleState extends State<changeVehicle> {
   var currentVehicle;
   bool isSelectionMode = false;
   final int listLength = 30;
-  int? uid;
+  String? uid = 'ae8a5c3e-7c5b-4d58-9bae-e8469112b14f';
 
 // Get the user id from the database
   Future<void> getDriverId() async {
@@ -41,7 +41,7 @@ class _changeVehicleState extends State<changeVehicle> {
         .execute();
     final driverId = response.data[0]['driver_id'];
     setState(() {
-      uid = int.tryParse(driverId.toString());
+      //uid = int.tryParse(driverId.toString());
     });
     readData(uid);
   }
@@ -262,7 +262,7 @@ class _changeVehicleState extends State<changeVehicle> {
       );
     }
   }
-  Future<void> readData(int? uid) async {
+  Future<void> readData(String? uid) async {
 
     if (uid == null) {
       print ('uid is null');
