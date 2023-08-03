@@ -187,6 +187,8 @@ class _navBarState extends State<navBar> {
               onSelected: (value) {
                 if (value == 0) {
                   print('IM LOGGING OUT');
+                  supabase.auth.signOut();
+                  Navigator.of(context).popAndPushNamed('/login');
                 }
               }),
         ],
@@ -249,6 +251,8 @@ class _navBarState extends State<navBar> {
                     //TODO: set driver to unavailable in db
                   });
                   print('IM LOGGING OUT');
+                  supabase.auth.signOut();
+                  Navigator.of(context).popAndPushNamed('/login');
                 }
               }),
         ],
