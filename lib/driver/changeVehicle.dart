@@ -15,7 +15,7 @@ class changeVehicle extends StatefulWidget {
 class _changeVehicleState extends State<changeVehicle> {
   //get current user's vehicle
   final User? user = supabase.auth.currentUser;
-  //final String? uid = supabase.auth.currentUser!.id;
+  final String? uid = supabase.auth.currentUser!.id;
   final String? uEmail = supabase.auth.currentUser!.email;
   final SupabaseClient _client = Supabase.instance.client;
 
@@ -30,30 +30,20 @@ class _changeVehicleState extends State<changeVehicle> {
   var currentVehicle;
   bool isSelectionMode = false;
   final int listLength = 30;
-  String? uid = 'ae8a5c3e-7c5b-4d58-9bae-e8469112b14f';
+  //String? uid = 'ae8a5c3e-7c5b-4d58-9bae-e8469112b14f';
+
+
 
 // Get the user id from the database
-  Future<void> getDriverId() async {
-    final PostgrestResponse response = await _client
-        .from('drivers')
-        .select('driver_id')
-        .eq('email', uEmail)
-        .execute();
-    final driverId = response.data[0]['driver_id'];
-    setState(() {
-      //uid = int.tryParse(driverId.toString());
-    });
-    readData(uid);
-  }
   @override
   void initState() {
     super.initState();
     //_selected = List<bool>.generate(listLength, (int index) => false);
 
     //print(uid);
-
+    readData(uid);
     print(uEmail);
-    getDriverId();
+    //getDriverId();
     //print(currentVehicle);
 
 

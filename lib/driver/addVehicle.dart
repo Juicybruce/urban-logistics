@@ -23,23 +23,12 @@ class _addVehicleState extends State<addVehicle> {
   var _truckWeightController = TextEditingController();
   var _insuranceNumberController = TextEditingController();
   bool _isCooling = false;
-  int? uid;
+  final String? uid = supabase.auth.currentUser!.id;
 
-// Get the user id from the database
-  Future<void> getDriverId() async {
-    final response = await _client
-        .from('drivers')
-        .select('driver_id')
-        .eq('email', uEmail)
-        .execute();
-    final driverId = response.data[0]['driver_id'];
-    setState(() {
-      uid = int.tryParse(driverId.toString());
-    });
-  }
+
 @override
   void initState() {
-    getDriverId();
+
     super.initState();
   }
 
