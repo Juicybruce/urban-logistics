@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -16,7 +14,6 @@ import 'merchant/mapMerchant.dart';
 import 'merchant/newPost.dart';
 import 'dart:async';
 
-import 'pages/splash_page.dart';
 
 class navBar extends StatefulWidget {
   const navBar({Key? key}) : super(key: key);
@@ -33,9 +30,8 @@ class _navBarState extends State<navBar> {
   User? user;
 
   Session? session;
-  String? email;
-  String? subTitle;
-  Future<String>? _username;
+  String? userID;
+  String subTitle = "";
   String? uname;
 
   @override
@@ -44,8 +40,7 @@ class _navBarState extends State<navBar> {
     super.initState();
     user = supabase.auth.currentUser;
     session = supabase.auth.currentSession;
-    email = user?.email;
-    //_username =
+    userID = user?.id;
     getUserDetails();
   }
 
@@ -53,15 +48,18 @@ class _navBarState extends State<navBar> {
   var response = await supabase
       .from('suppliers')
       .select('first_name, last_name, business_name')
-      .eq('email', email);
+      .eq('supplier_id', userID);
   if (response.length == 0){
     response = await supabase
         .from('drivers')
         .select('first_name, last_name, trucks!drivers_current_vehicle_fkey(license_plate)')
-        .eq('email', email);
-    var tempString  = response[0]['trucks']['license_plate'].toString();
-    print(response[0]['trucks']['license_plate'].toString());
-    subTitle = tempString;
+        .eq('driver_id', userID);
+
+    print(response[0].length);
+    if(response[0]["trucks"] != null) {
+      var tempString  = response[0]['trucks']['license_plate'].toString();
+      subTitle = tempString;
+    }
     setState(() {
       isMerchant = false;
     });
@@ -195,7 +193,7 @@ class _navBarState extends State<navBar> {
                       color: currentTab == 2 ? Colors.white : Colors.black,
                     ),
                     Text(
-                      'Activity',
+                      'Current',
                       style: TextStyle(
                           color: currentTab == 2 ? Colors.white : Colors.black),
                     ),
@@ -243,7 +241,7 @@ class _navBarState extends State<navBar> {
           //buildUsername(),
               //Text(_username, style: TextStyle(fontSize: 13)),
               Text(uname!, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-             Text(subTitle!, style: TextStyle(fontSize: 13)),
+             Text(subTitle, style: TextStyle(fontSize: 13)),
            ],
         ),
         actions: [
@@ -281,7 +279,7 @@ class _navBarState extends State<navBar> {
         title: Column(
           children: [
             Text(uname!, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            Text(subTitle!, style: TextStyle(fontSize: 13)),
+            Text(subTitle, style: TextStyle(fontSize: 13)),
             //buildUsername(),
             //Text('<vehicle rego number>', style: TextStyle(fontSize: 13)),
           ],
@@ -337,7 +335,7 @@ class _navBarState extends State<navBar> {
         title: Column(
           children:  [
             Text(uname!, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            Text(subTitle!, style: TextStyle(fontSize: 13)),
+            Text(subTitle, style: TextStyle(fontSize: 13)),
             // buildUsername(),
             // Text('<vehicle rego number>', style: TextStyle(fontSize: 13)),
           ],
