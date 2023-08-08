@@ -19,11 +19,11 @@ class _changeVehicleState extends State<changeVehicle> {
   final String? uEmail = supabase.auth.currentUser!.email;
   final SupabaseClient _client = Supabase.instance.client;
 
-  final Stream _future = Supabase.instance.client
+  /*final Stream _future = Supabase.instance.client
       .from('trucks')
   //select the data from the database
       .select()
-    .asStream();
+    .asStream();*/
   //get the data from the database real time
 //print uid to check if it is correct
 
@@ -42,22 +42,21 @@ class _changeVehicleState extends State<changeVehicle> {
 
     //print(uid);
     readData(uid);
-    print(uEmail);
     //getDriverId();
     //print(currentVehicle);
-
-
   }
 
   @override
   Widget build(BuildContext context) {
     //retrieve driver id from the driver table using user's email
     //final uid = _client.from('drivers').select('id').eq('email',uEmail);
+    final Stream _future = Supabase.instance.client
+        .from('trucks')
+    //select the data from the database
+        .select()
+        .asStream();
 
-    //final uid =  getDriverId();
-    //print(uid);
-    //filter the truck table using the driver id
-    //PostgrestResponse newRecord;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Change Vehicle'),
@@ -70,7 +69,7 @@ class _changeVehicleState extends State<changeVehicle> {
                 builder: (BuildContext context) {
                   return addVehicle();
                   //after adding a vehicle, refresh the truck list
-                }).then((value) => setState(() {}));
+                }).then ((_) => setState(() {}));
 
             },
           ),

@@ -156,7 +156,6 @@ class _addVehicleState extends State<addVehicle> {
                 );
               }
               //refresh change vehicle page
-
               Navigator.pop(context);
             }
           },
