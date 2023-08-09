@@ -1,5 +1,11 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+//location
+import 'package:location/location.dart';
+
+import '../constants.dart';
+
 
 class mapDriver extends StatefulWidget {
   const mapDriver({Key? key}) : super(key: key);
@@ -12,13 +18,52 @@ class _mapDriverState extends State<mapDriver> {
 
   @override
   void initState() {
+
   }
 
   @override
   Widget build(BuildContext context) {
+    //set the map to the user's location VARIABLE
+    var myLocation = AppConstants.myLocation;
+
     return Scaffold(
-      body: Center(
-        child: Text('Driver Map Screen'),
+      //center the map on the user's location button
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            //get the user's location using the location package
+            Location().getLocation().then((value) {
+              myLocation = LatLng(value.latitude!, value.longitude!);
+            });
+          });
+
+        },
+        child: const Icon(Icons.location_on),
+      ),
+
+      body: Stack(
+        children: [
+          FlutterMap(
+            options: MapOptions(
+              minZoom: 5,
+              maxZoom: 18,
+              zoom: 13,
+              center: myLocation,
+            ),
+            children: [
+              TileLayerWidget(
+                options: TileLayerOptions(
+                  urlTemplate: "https://api.mapbox.com/styles/v1/leigh3211/{mapStyleId}/tiles/256/{z}/{x}/{y}@2x?access_token={accessToken}",
+                  additionalOptions: {
+                    //from ../constants.dart
+                    'mapStyleId': AppConstants.mapBoxStyleId,
+                    'accessToken': AppConstants.mapBoxAccessToken,
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:latlong2/latlong.dart';
 
 /// Environment variables and shared app constants.
 abstract class Constants {
@@ -31,4 +32,12 @@ extension ShowSnackBar on BuildContext {
   void showErrorSnackBar({required String message}) {
     showSnackBar(message: message, backgroundColor: Colors.red);
   }
+
+
+}
+class AppConstants {
+  static const String mapBoxAccessToken = 'pk.eyJ1IjoibGVpZ2gzMjExIiwiYSI6ImNsbDM4Zzl6MDBkb3czZHBydmVvazMwbHYifQ.gsyuyH317PYisMD96fxAig';
+  static const String mapBoxStyleId = 'cll38liz100ey01pm46mx7slt';
+  static late final myLocation = LatLng(51.5090214, -0.1982948);
+
 }

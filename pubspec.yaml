@@ -40,6 +40,8 @@ dependencies:
   #geolocator: ^9.0.2
   #geocoding: ^2.1.0
   location: ^4.4.0
+  flutter_map: ^1.1.1
+
 
 dev_dependencies:
   flutter_test:
