@@ -16,26 +16,26 @@ class mapDriver extends StatefulWidget {
 
 class _mapDriverState extends State<mapDriver> {
 
+
   @override
   void initState() {
+    super.initState();
+
 
   }
-
+  final mapController = MapController();
   @override
   Widget build(BuildContext context) {
     //set the map to the user's location VARIABLE
-    var myLocation = AppConstants.myLocation;
+    LatLng myLocation = LatLng(0, 0);
 
     return Scaffold(
       //center the map on the user's location button
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            //get the user's location using the location package
-            Location().getLocation().then((value) {
-              myLocation = LatLng(value.latitude!, value.longitude!);
-            });
-          });
+        onPressed: () async {
+          final LocationData value = await Location().getLocation();
+          mapController.move(LatLng(value.latitude!, value.longitude!), 13);
+
 
         },
         child: const Icon(Icons.location_on),
@@ -44,27 +44,40 @@ class _mapDriverState extends State<mapDriver> {
       body: Stack(
         children: [
           FlutterMap(
+            mapController: mapController,
             options: MapOptions(
               minZoom: 5,
               maxZoom: 18,
               zoom: 13,
               center: myLocation,
+
             ),
-            children: [
-              TileLayerWidget(
-                options: TileLayerOptions(
-                  urlTemplate: "https://api.mapbox.com/styles/v1/leigh3211/{mapStyleId}/tiles/256/{z}/{x}/{y}@2x?access_token={accessToken}",
-                  additionalOptions: {
+            nonRotatedChildren: [
+              TileLayer(
+
+                  urlTemplate: 'https://api.mapbox.com/styles/v1/leigh3211/{mapStyleId}/tiles/256/{z}/{x}/{y}@2x?access_token={accessToken}',
+                  additionalOptions: const {
                     //from ../constants.dart
                     'mapStyleId': AppConstants.mapBoxStyleId,
                     'accessToken': AppConstants.mapBoxAccessToken,
                   },
                 ),
-              ),
             ],
+
+
+
           ),
         ],
       ),
     );
+  }
+  //update the user's location on the map`
+  void updateLocation() {
+    setState(() {
+      //get the user's location using the location package
+      Location().getLocation().then((LocationData value) {
+        //AppConstants.myLocation = LatLng(value.latitude!, value.longitude!);
+      });
+    });
   }
 }

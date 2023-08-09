@@ -40,7 +40,7 @@ dependencies:
   #geolocator: ^9.0.2
   #geocoding: ^2.1.0
   location: ^4.4.0
-  flutter_map: ^1.1.1
+  flutter_map: ^5.0.0
 
 
 dev_dependencies:
