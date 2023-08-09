@@ -93,7 +93,8 @@ class _changeVehicleState extends State<changeVehicle> {
                     itemCount: filteredData.length,
                     itemBuilder: (BuildContext context, int index) {
                       final Map<String, dynamic> vehicle = filteredData[index] as Map<String, dynamic>;
-                      return ListTile(
+                      return Card(
+                        child: ListTile (
                         title: Text(vehicle['license_plate'].toString()),
                         subtitle: Text(vehicle['truck_type'].toString()),
 
@@ -201,6 +202,7 @@ class _changeVehicleState extends State<changeVehicle> {
                             },
                           );
                         },
+                      ),
                       );
                     },
                   );
