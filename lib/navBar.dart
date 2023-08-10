@@ -44,6 +44,20 @@ class _navBarState extends State<navBar> {
     getUserDetails();
   }
 
+  Future<void> setAvailable() async{
+ await supabase
+    .from('drivers')
+    .update({ 'available': true})
+    .eq('driver_id', userID);
+  }
+
+  Future<void> setUnavailable() async{
+ await supabase
+    .from('drivers')
+    .update({ 'available': false})
+    .eq('driver_id', userID);
+  }
+
   Future<void> getUserDetails() async {
   var response = await supabase
       .from('suppliers')
@@ -308,19 +322,19 @@ class _navBarState extends State<navBar> {
                 if (value == 0) {
                   setState(() {
                     driverAvailable = true;
-                    //TODO: set driver to available in db
+                    setAvailable();
                   });
                   print('IM AVAILABLE.');
                 } else if (value == 1) {
                   setState(() {
                     driverAvailable = false;
-                    //TODO: set driver to unavailable in db
+                    setUnavailable();
                   });
                   print('IM UNAVAILABLE.');
                 } else if (value == 2) {
                   setState(() {
                     driverAvailable = false;
-                    //TODO: set driver to unavailable in db
+                    setUnavailable();
                   });
                   print('IM LOGGING OUT');
                   supabase.auth.signOut();
@@ -364,19 +378,19 @@ class _navBarState extends State<navBar> {
                 if (value == 0) {
                   setState(() {
                     driverAvailable = true;
-                    //TODO: set driver to available in db
+                    setAvailable();
                   });
                   print('IM AVAILABLE.');
                 } else if (value == 1) {
                   setState(() {
                     driverAvailable = false;
-                    //TODO: set driver to unavailable in db
+                    setUnavailable();
                   });
                   print('IM UNAVAILABLE.');
                 } else if (value == 2) {
                   setState(() {
                     driverAvailable = false;
-                    //TODO: set driver to unavailable in db
+                    setUnavailable();
                   });
                   print('IM LOGGING OUT');
                   supabase.auth.signOut();
@@ -387,34 +401,6 @@ class _navBarState extends State<navBar> {
       );
     }
   }
-//Obsolete???
-  // FutureBuilder<String> buildUsername() {
-  //   return FutureBuilder<String>(
-  //       future: _username,
-  //       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-  //         List<Widget> children;
-  //         if (snapshot.hasData) {
-  //           children = <Widget>[
-  //             Text(
-  //                 snapshot.data.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-  //           ];
-  //         } else if (snapshot.hasError){
-  //           children = <Widget>[
-  //             // Text(
-  //             //     "ERROR", style: TextStyle(fontSize: 13)),
-  //           ];
-  //         }else {
-  //           children = const <Widget>[];
-  //         }
-  //         return Center(
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: children,
-  //           ),
-  //         );
-  //       }
-  //   );
-  // }
 
   FloatingActionButton buildFloatingActionButton() {
     if (isMerchant == true) {
@@ -454,3 +440,5 @@ List<Widget> getScreens(bool isMerchant) {
     ];
   }
 }
+
+
