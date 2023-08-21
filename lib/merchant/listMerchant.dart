@@ -246,7 +246,7 @@ class _listMerchantState extends State<listMerchant> {
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Container(
-                        child :  Text('${data[index]['contact_number']}', style: TextStyle( fontSize: 15)),
+                        child :  Text('${data[index]['contactnumber']}', style: TextStyle( fontSize: 15)),
                       )
                   )
               ),
