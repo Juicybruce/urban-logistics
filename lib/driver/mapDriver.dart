@@ -17,6 +17,7 @@ class mapDriver extends StatefulWidget {
 class _mapDriverState extends State<mapDriver> {
 
 
+
   @override
   void initState() {
     super.initState();
@@ -26,17 +27,21 @@ class _mapDriverState extends State<mapDriver> {
   final mapController = MapController();
   @override
   Widget build(BuildContext context) {
-    //set the map to the user's location VARIABLE
+    //set the map to GPS location
     LatLng myLocation = LatLng(0, 0);
 
+    ////update the user's location before building the map
+    updateLocation();
+
     return Scaffold(
+
+
+
       //center the map on the user's location button
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final LocationData value = await Location().getLocation();
           mapController.move(LatLng(value.latitude!, value.longitude!), 13);
-
-
         },
         child: const Icon(Icons.location_on),
       ),
@@ -76,6 +81,7 @@ class _mapDriverState extends State<mapDriver> {
     setState(() {
       //get the user's location using the location package
       Location().getLocation().then((LocationData value) {
+        mapController.move(LatLng(value.latitude!, value.longitude!), 13);
         //AppConstants.myLocation = LatLng(value.latitude!, value.longitude!);
       });
     });
