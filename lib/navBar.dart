@@ -44,6 +44,13 @@ class _navBarState extends State<navBar> {
     getUserDetails();
   }
 
+
+  FutureOr popChangeVehicle(dynamic value){
+    setState(() {
+      getUserDetails();
+    });
+  }
+
   Future<void> setAvailable() async{
  await supabase
     .from('drivers')
@@ -415,7 +422,7 @@ class _navBarState extends State<navBar> {
       return FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const changeVehicle()));
+              MaterialPageRoute(builder: (context) => const changeVehicle())).then(popChangeVehicle);
         },
         child: const Icon(Icons.compare_arrows),
       );
