@@ -42,7 +42,7 @@ class _historyMerchantState extends State<historyMerchant> {
     dbdata = response as List<dynamic>;
     expanded = List<bool>.filled(dbdata!.length, false);
     //print("TEST1  ${dbdata?[0]['job_status']}");
-    print("TEST1  ${dbdata?[1]}");
+    //print("TEST1  ${dbdata?[1]}");
     setState(() {
       isLoading = false;
     });
