@@ -32,15 +32,17 @@ class _historyMerchantState extends State<historyMerchant> {
     await Future.delayed(const Duration(seconds: 1));
     var response = await supabase
         .from('advertisments')
-        .select('*, suppliers!inner(supplier_id, email)')
-        .eq('suppliers.supplier_id', userID)
+        //.select('*, suppliers!inner(supplier_id, email)')
+        .select()
+        //.eq('suppliers.supplier_id', userID)
+        .eq('supplier_id', userID)
         .or ('job_status.eq.COMPLETE, job_status.eq.CANCELLED');
     //.order('job_id', ascending: false); //TODO: Order by job date or something like
     //print(response);
     dbdata = response as List<dynamic>;
     expanded = List<bool>.filled(dbdata!.length, false);
     //print("TEST1  ${dbdata?[0]['job_status']}");
-    //print("TEST1  ${dbdata?[1]}");
+    print("TEST1  ${dbdata?[1]}");
     setState(() {
       isLoading = false;
     });
