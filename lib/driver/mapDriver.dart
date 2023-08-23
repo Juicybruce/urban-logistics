@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 //location
 import 'package:location/location.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 
 import '../constants.dart';
 
@@ -24,7 +25,7 @@ class _mapDriverState extends State<mapDriver> {
 
 
   }
-  final mapController = MapController();
+  final MapController mapController = MapController();
   @override
   Widget build(BuildContext context) {
     //set the map to GPS location
@@ -57,7 +58,10 @@ class _mapDriverState extends State<mapDriver> {
               center: myLocation,
 
             ),
-            nonRotatedChildren: [
+              children: [
+
+
+              //ad marker layer
               TileLayer(
 
                   urlTemplate: 'https://api.mapbox.com/styles/v1/leigh3211/{mapStyleId}/tiles/256/{z}/{x}/{y}@2x?access_token={accessToken}',
@@ -67,7 +71,11 @@ class _mapDriverState extends State<mapDriver> {
                     'accessToken': AppConstants.mapBoxAccessToken,
                   },
                 ),
-            ],
+              //user location marker layer
+                CurrentLocationLayer()
+
+
+              ],
 
 
 
@@ -82,7 +90,6 @@ class _mapDriverState extends State<mapDriver> {
       //get the user's location using the location package
       Location().getLocation().then((LocationData value) {
         mapController.move(LatLng(value.latitude!, value.longitude!), 13);
-        //AppConstants.myLocation = LatLng(value.latitude!, value.longitude!);
       });
     });
   }
