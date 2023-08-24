@@ -9,6 +9,8 @@ class newPost extends StatefulWidget {
   State<newPost> createState() => _newPostState();
 }
 
+// TODO - add validation for time, add calulation for distance and price
+
 class _newPostState extends State<newPost> {
   final _formKey = GlobalKey<FormState>();
   var _goodsTypeController = TextEditingController();
@@ -17,6 +19,9 @@ class _newPostState extends State<newPost> {
   var _addressPickupController = TextEditingController();
   var _addressDeliveryController = TextEditingController();
   var _goodsQuantityController = TextEditingController();
+  var _contactNameController = TextEditingController();
+  var _contactNumberController = TextEditingController();
+  var _pickupTimeController = TextEditingController();
   bool needsFridge = false;
 
   @override
@@ -124,6 +129,46 @@ class _newPostState extends State<newPost> {
                     return null;
                   },
                 ),
+                //controller for contact_name, contact_number and pickup time
+                TextFormField(
+                  controller: _contactNameController,
+                  decoration: const InputDecoration(labelText: 'Contact Name'),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a contact name';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _contactNumberController,
+                  keyboardType: TextInputType.number,
+                  decoration:
+                      const InputDecoration(labelText: 'Contact Number'),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a contact number';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _pickupTimeController,
+                  decoration:
+                      const InputDecoration(labelText: 'Pickup Time (24hr)'),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a pickup time';
+                    }
+                    //additional validation for time in the correct format for time without time zone as stored in a postgresql database
+                    if (value.length != 5 ||
+                        int.parse(value.substring(0, 2)) > 23 ||
+                        int.parse(value.substring(3, 5)) > 59) {
+                      return 'Please enter a valid time';
+                    }
+                    return null;
+                  },
+                ),
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
@@ -144,6 +189,9 @@ class _newPostState extends State<newPost> {
                               'supplier_id': userID,
                               'cooling_required': needsFridge,
                               'job_status': 'POSTED',
+                              'contact_name': _contactNameController.text,
+                              'contact_number': _contactNumberController.text,
+                              'pickup_time': _pickupTimeController.text,
                             }
                           ]);
                         }

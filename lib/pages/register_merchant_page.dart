@@ -19,6 +19,10 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
   TextEditingController _businessNameController = TextEditingController();
   TextEditingController _ABNController = TextEditingController();
   TextEditingController _bankAccountNumberController = TextEditingController();
+  TextEditingController _businessAddressController = TextEditingController();
+  TextEditingController _yearEstablishedController = TextEditingController();
+  TextEditingController _productTypeController = TextEditingController();
+  TextEditingController _businessTypeController = TextEditingController();
 
   late final StreamSubscription<AuthState> _authStateSubscription;
 
@@ -44,6 +48,10 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
     _businessNameController.dispose();
     _ABNController.dispose();
     _bankAccountNumberController.dispose();
+    _businessAddressController.dispose();
+    _yearEstablishedController.dispose();
+    _productTypeController.dispose();
+    _businessTypeController.dispose();
     _authStateSubscription.cancel();
     super.dispose();
   }
@@ -165,6 +173,47 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                   return null;
                 },
               ),
+              // fields for business_address year_established product_type business_type
+              TextFormField(
+                controller: _businessAddressController,
+                decoration: InputDecoration(labelText: 'Business Address'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your business address.';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _yearEstablishedController,
+                decoration: InputDecoration(labelText: 'Year Established'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the year your business was established.';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _productTypeController,
+                decoration: InputDecoration(labelText: 'Product Type'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your product type.';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _businessTypeController,
+                decoration: InputDecoration(labelText: 'Business Type'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your business type.';
+                  }
+                  return null;
+                },
+              ),
               TextFormField(
                 controller: _bankAccountNumberController,
                 decoration: InputDecoration(labelText: 'Bank Account Number'),
@@ -201,6 +250,10 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                       final ABN = _ABNController.text;
                       final bankAccountNumber =
                           _bankAccountNumberController.text;
+                      final businessAddress = _businessAddressController.text;
+                      final yearEstablished = _yearEstablishedController.text;
+                      final productType = _productTypeController.text;
+                      final businessType = _businessTypeController.text;
 
                       final response = await supabase.auth
                           .signUp(email: email, password: password);
@@ -217,6 +270,10 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                             'business_name': businessName,
                             'business_registration': ABN,
                             'billing_details': bankAccountNumber,
+                            'business_address': businessAddress,
+                            'year_established': yearEstablished,
+                            'product_type': productType,
+                            'business_type': businessType,
                           }
                         ]);
                       } else {
