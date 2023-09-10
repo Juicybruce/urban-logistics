@@ -36,7 +36,7 @@ class _historyMerchantState extends State<historyMerchant> {
         .select('*, drivers:driver_id(driver_id, first_name, last_name, contactnumber)')
     //.eq('drivers.driver_id', 'driver_id')
         .eq('supplier_id', userID)
-        .eq('archived', false)
+        .eq('merchant_archived', false)
         .or ('job_status.eq.COMPLETE, job_status.eq.CANCELLED')
         .order('pickup_time', ascending: true); //TODO: Order by job date or something like
     //print(response[0]["drivers"]["first_name"]);
@@ -54,7 +54,7 @@ class _historyMerchantState extends State<historyMerchant> {
     //await Future.delayed(const Duration(seconds: 0));
     await supabase
         .from('advertisments')
-        .update({'archived':  true})
+        .update({'merchant_archived':  true})
         .match({'job_id': jobID});
     getHistory();
   }
@@ -104,7 +104,6 @@ class _historyMerchantState extends State<historyMerchant> {
 
   @override
   void dispose() {
-    // Make sure to remove OverlayEntry when the widget is disposed.
     removeLoadingOverlay();
     super.dispose();
   }

@@ -48,4 +48,5 @@ class ColorConstants{
  static final Color completeColor = Colors.greenAccent.shade200;
  static final Color cancelledColor = Colors.redAccent.shade100;
  static final Color merchantListColor = Colors.lightBlue.shade200;
+ static final Color driverListColor = Colors.amber.shade600;
 }
