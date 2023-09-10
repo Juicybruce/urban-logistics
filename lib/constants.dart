@@ -40,4 +40,12 @@ class AppConstants {
   static const String mapBoxStyleId = 'cll38liz100ey01pm46mx7slt';
   static late final myLocation = LatLng(51.5090214, -0.1982948);
 
+
+
+}
+
+class ColorConstants{
+ static final Color completeColor = Colors.greenAccent.shade200;
+ static final Color cancelledColor = Colors.redAccent.shade100;
+ static final Color merchantListColor = Colors.lightBlue.shade200;
 }

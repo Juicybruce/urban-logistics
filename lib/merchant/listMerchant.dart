@@ -29,13 +29,13 @@ class _listMerchantState extends State<listMerchant> {
   }
 
   Future<void> getDrivers() async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 0));
     var response = await supabase
         .from('drivers')
         .select('*, trucks!drivers_current_vehicle_fkey(*)')
         .eq('available', true);
     //.order('job_id', ascending: false); //TODO: Order by closest or something like
-    print(response);
+    //print(response);
     dbdata = response as List<dynamic>;
     expanded = List<bool>.filled(dbdata!.length, false);
     //print("TEST1  ${dbdata?[0]['job_status']}");
@@ -156,21 +156,21 @@ class _listMerchantState extends State<listMerchant> {
   Card buildCard(int index, List<bool> expanded, dynamic data) {
     //String subtitleText = "NOT EXPANDED";
     print(data[index]['job_status']);
-    Color? cardColor = Colors.lightBlue[100];
+    Color? cardColor = ColorConstants.merchantListColor;
     return Card(
       child: ListTile(
         //leading: Icon(Icons.fire_truck_outlined, size: 50,),
         title: Padding(
-          padding: const EdgeInsetsDirectional.only(top: 8.0, bottom: 4.0),
+          padding: const EdgeInsetsDirectional.only(top: 2.0),
           child: Column(
             children : [
-              Text('${data[index]['first_name']} ${data[index]['last_name']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 25 ,fontWeight: FontWeight.bold),),
+              Text('${data[index]['first_name']} ${data[index]['last_name']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 20 ,fontWeight: FontWeight.bold),),
               buildDriverLicense_plate(data, index),
             ],
           ),
         ),
         subtitle: Padding(
-          padding: const EdgeInsetsDirectional.only(bottom: 8.0, top: 4.0),
+          padding: const EdgeInsetsDirectional.only(bottom: 8.0, top: 2.0),
           child: buildSubstring(index, data),
         ),
         onTap: () {
@@ -217,7 +217,7 @@ class _listMerchantState extends State<listMerchant> {
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Container(
-                        child : Text('Distance', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
+                        child : Text('Distance', style: TextStyle( fontSize: 16 ,fontWeight: FontWeight.bold),),
                       )
                   )
               ),
@@ -259,6 +259,27 @@ class _listMerchantState extends State<listMerchant> {
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Container(
+                        child : Text('Experince', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
+                      )
+                  )
+              ),
+              Expanded(
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        child :  Text('${data[index]['delivery_experience']} Years', style: TextStyle( fontSize: 15)),
+                      )
+                  )
+              ),
+            ],
+          ),
+          Row(
+            //mainAxisAlignment: MainAxisAlignment.,
+            children: <Widget>[
+              Expanded(
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
                         child : Text('Rating', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
                       )
                   )
@@ -272,13 +293,57 @@ class _listMerchantState extends State<listMerchant> {
                   )
               ),
             ],
+    ),
+            if (data[index]['company_name'] != null) ...[
+         Row(
+            //mainAxisAlignment: MainAxisAlignment.,
+            children: <Widget>[
+              Expanded(
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        child : Text('Company', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
+                      )
+                  )
+              ),
+              Expanded(
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        child :  Text('${data[index]['company_name']}', style: TextStyle( fontSize: 15)),
+                      )
+                  )
+              ),
+            ],
           ),
+          ],
           if(data[index]['trucks'] != null) ...[
             Padding(
               padding: const EdgeInsetsDirectional.only(
                   top: 8.0, bottom: 4.0),
               child: Text('Vehicle Details', style: TextStyle(
                   fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+            Row(
+              //mainAxisAlignment: MainAxisAlignment.,
+              children: <Widget>[
+                Expanded(
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          child : Text('Vehicle Registration Number', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
+                        )
+                    )
+                ),
+                Expanded(
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          child :  Text('${data[index]['trucks']['license_plate']}', style: TextStyle( fontSize: 15)),
+                        )
+                    )
+                ),
+              ],
             ),
             Row(
               //mainAxisAlignment: MainAxisAlignment.,
