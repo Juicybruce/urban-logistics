@@ -36,7 +36,7 @@ class _historyDriverState extends State<historyDriver> {
         .eq('driver_id', userID)
         .eq('driver_archived', false)
         .or ('job_status.eq.COMPLETE')
-        .order('pickup_time', ascending: true); //TODO: Order by job date or something like
+        .order('pickup_time', ascending: false); //TODO: Order by job date or something like
    print(response);
     dbdata = response as List<dynamic>;
     expanded = List<bool>.filled(dbdata!.length, false);
@@ -230,404 +230,29 @@ class _historyDriverState extends State<historyDriver> {
     } else {
       String cooling = "";
       data[index]['cooling_required'] == 'TRUE' ? cooling = "Yes" : cooling = "No";
-
+      Color? textColor = data[index]['job_status']  == 'COMPLETE' ? Colors.black : Colors.black;
       return Column(
         children: [
           SizedBox(height: 10,),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child: Text('Merchant Name ', style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child: Text('${data[index]['suppliers']['first_name']} ${data[index]['suppliers']['last_name']}',
-                          style: TextStyle(fontSize: 15),),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child: Text('Business Name',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child: Text('${data[index]['suppliers']['business_name']}',
-                          style: TextStyle(fontSize: 15),),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child: Text('Merchant Contact Number',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child: Text('${data[index]['suppliers']['contact_phone']}',
-                          style: TextStyle(fontSize: 15),),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child : Text('Pickup Address', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child :  Text('${data[index]['pickup_address']}', style: TextStyle( fontSize: 15)),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child : Text('Delivery Address', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child :  Text('${data[index]['dropoff_address']}', style: TextStyle( fontSize: 15)),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child : Text('Distance', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child :  Text('${data[index]['distance']}', style: TextStyle( fontSize: 15),),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child : Text('Collection Time', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child :  Text('${data[index]['pickup_time']}', style: TextStyle( fontSize: 15),),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child : Text('Delivery Time', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child :  Text('${data[index]['delivery_time']}', style: TextStyle( fontSize: 15),),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child : Text('Goods', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child :  Text('${data[index]['goods_type']}', style: TextStyle( fontSize: 15),),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child : Text('Quantity', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child :  Text('${data[index]['quantity']}', style: TextStyle( fontSize: 15)),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child : Text('Total Weight', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child :  Text('${data[index]['weight']}', style: TextStyle( fontSize: 15)),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child : Text('Size', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child :  Text('${data[index]['size']}', style: TextStyle( fontSize: 15)),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child : Text('Cooling Required', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child :  Text('${cooling}', style: TextStyle( fontSize: 15)),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child : Text('Buyer Name', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child :  Text('${data[index]['contact_name']}', style: TextStyle( fontSize: 15),),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child : Text('Buyer Contact Number', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child :  Text('${data[index]['contact_number']}', style: TextStyle( fontSize: 15),),
-                      )
-                  )
-              ),
-            ],
-          ),
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.,
-            children: <Widget>[
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child : Text('Delivery Cost', style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold),),
-                      )
-                  )
-              ),
-              Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        child :  Text('${data[index]['cost']}', style: TextStyle( fontSize: 15),),
-                      )
-                  )
-              ),
-            ],
-          ),
-               Row(
-              //mainAxisAlignment: MainAxisAlignment.,
-              children: <Widget>[
-                Expanded(
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          child: Text('Signee\'s Name',
-                            style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold),),
-                        )
-                    )
-                ),
-                Expanded(
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          child: Text('${data[index]['signee_name']}',
-                            style: TextStyle(fontSize: 15),),
-                        )
-                    )
-                ),
-              ],
-            ),
-            Row(
-              //mainAxisAlignment: MainAxisAlignment.,
-              children: <Widget>[
-                Expanded(
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          child: Text('Confirmation Photo',
-                            style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold),),
-                        )
-                    )
-                ),
-                Expanded(
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          child: Text('A PHOTO',
-                            style: TextStyle(fontSize: 15),),
-                        )
-                    )
-                ),
-              ],
-            ),
-          SizedBox(
-            height: 10,
-          ),
+          buildExpandedRow(data, index, 'Merchant Name', '${data[index]['suppliers']['first_name']} ${data[index]['suppliers']['last_name']}', textColor),
+          buildExpandedRow(data, index, 'Business Name', data[index]['suppliers']['business_name'].toString(), textColor),
+          buildExpandedRow(data, index, 'Merchant Contact Number', data[index]['suppliers']['contact_phone'].toString(), textColor),
+          buildExpandedRow(data, index, 'Pickup Address', data[index]['pickup_address'].toString(), textColor),
+          buildExpandedRow(data, index, 'Delivery Address', data[index]['dropoff_address'].toString(), textColor),
+          buildExpandedRow(data, index, 'Distance', data[index]['distance'].toString(), textColor),
+          buildExpandedRow(data, index, 'Collection Time', data[index]['pickup_time'].toString(), textColor),
+          buildExpandedRow(data, index, 'Delivery Time', data[index]['delivery_time'].toString(), textColor),
+          buildExpandedRow(data, index, 'Goods', data[index]['goods_type'].toString(), textColor),
+          buildExpandedRow(data, index, 'Quantity', data[index]['quantity'].toString(), textColor),
+          buildExpandedRow(data, index, 'Total Weight', data[index]['weight'].toString(), textColor),
+          buildExpandedRow(data, index, 'Size', data[index]['size'].toString(), textColor),
+          buildExpandedRow(data, index, 'Cooling Required', data[index]['${cooling}'].toString(), textColor),
+          buildExpandedRow(data, index, 'Buyer Name', data[index]['contact_name'].toString(), textColor),
+          buildExpandedRow(data, index, 'Buyer Contact Number', data[index]['contact_number'].toString(), textColor),
+          buildExpandedRow(data, index, 'Delivery Cost', "\$${data[index]['cost']}", textColor),
+          buildExpandedRow(data, index, 'Signee\'s Name', data[index]['signee_name'].toString(), textColor),
+          buildExpandedRow(data, index, 'Confirmation Photo', 'A PHOTO', textColor),
+          SizedBox(height: 10,),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -668,5 +293,29 @@ class _historyDriverState extends State<historyDriver> {
         ],
       );
     }
+  }
+
+  Row buildExpandedRow(data, int index, String leftText, String rightText, Color textColor) {
+    return Row(
+      //mainAxisAlignment: MainAxisAlignment.,
+      children: <Widget>[
+        Expanded(
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  child : Text(leftText, style: TextStyle(color: textColor, fontSize: 15 ,fontWeight: FontWeight.bold),),
+                )
+            )
+        ),
+        Expanded(
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  child :  Text(rightText, style: TextStyle(color: textColor, fontSize: 15)),
+                )
+            )
+        ),
+      ],
+    );
   }
 }
