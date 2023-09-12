@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:supabase/src/supabase_stream_builder.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../constants.dart';
 
@@ -55,19 +54,46 @@ class _activeMerchantState extends State<activeMerchant> {
     //await Future.delayed(const Duration(seconds: 0));
     await supabase
         .from('advertisments')
-        .update({'merchant_archived':  true})
+        .update({'merchant_archived':  true, 'job_status': 'CANCELLED'})
         .match({'job_id': jobID});
     getHistory();
   }
 
-  Future<bool> getJobStatus(String jobID) async {
+  Future<void> startDelivery(String jobID) async {
+    //await Future.delayed(const Duration(seconds: 0));
+    await supabase
+        .from('advertisments')
+        .update({'job_status':  'MERCHANT_START'})
+        .match({'job_id': jobID});
+    getHistory();
+  }
+
+  Future<void> confirmStartDelivery(String jobID) async {
+    //await Future.delayed(const Duration(seconds: 0));
+    await supabase
+        .from('advertisments')
+        .update({'job_status':  'EN_ROUTE'})
+        .match({'job_id': jobID});
+    getHistory();
+  }
+
+  Future<void> confirmEndDelivery(String jobID) async {
+    //await Future.delayed(const Duration(seconds: 0));
+    await supabase
+        .from('advertisments')
+        .update({'job_status':  'COMPLETE'})
+        .match({'job_id': jobID});
+    getHistory();
+  }
+
+  Future<bool> getJobStatus(String jobID, String jobStatus) async {
     //await Future.delayed(const Duration(seconds: 0));
     var response = await supabase
         .from('advertisments')
         .select('job_status')
         .eq('job_id', jobID);
-
-    return response[0]['job_status'] == 'POSTED' ?  true:  false;
+    print(response[0]['job_status'] == jobStatus);
+    return response[0]['job_status'] == jobStatus ?  true :  false;
 
   }
 
@@ -223,13 +249,28 @@ class _activeMerchantState extends State<activeMerchant> {
                   ],
                 ),
               ),
+
               Flexible(
+
                 flex: 2,
                 child: FittedBox(
                   fit: BoxFit.fitWidth,
+
                   child: Column(
+
                     children : [
-                      Text('${data[index]['job_status']}', textAlign: TextAlign.end, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
+
+                      if (data[index]['job_status'] == 'POSTED') ...[
+                        Text('POSTED', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
+                      ]else if (data[index]['job_status'] == 'ACCEPTED') ...[
+                        Text('ACCEPTED', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
+                      ]else if (data[index]['job_status'] == 'DRIVER_START' || data[index]['job_status'] == 'MERCHANT_START') ...[
+                        Text('PENDING\nRESPONSE', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
+                      ]else if (data[index]['job_status'] == 'EN_ROUTE') ...[
+                        Text('IN\nPROGRESS', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
+                      ]else if (data[index]['job_status'] == 'DELIVERED') ...[
+                        Text('DELIVERED', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
+                      ]
                     ],
                   ),
                 ),
@@ -308,7 +349,8 @@ class _activeMerchantState extends State<activeMerchant> {
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                                 onPressed: (){
-                                  if(getJobStatus('${data[index]['job_id']}') != 'POSTED') {
+                                  Future<bool> tempBool = getJobStatus('${data[index]['job_id']}', 'POSTED');
+                                  if(tempBool == false) {
                                     showDialog<void>(
                                       context: context,
                                       barrierDismissible: false, // user must tap button!
@@ -354,6 +396,219 @@ class _activeMerchantState extends State<activeMerchant> {
                     )
                     },
                     child: Text("CANCEL ADVERTISEMENT", textAlign: TextAlign.center, style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
+          ] else if (data[index]['job_status'] == 'ACCEPTED') ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                FittedBox(
+                  //width: 100,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    onPressed: () => { showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text("Start Delivery"),
+                          content: const Text("Has the delivery driver picked up the goods?"),
+                          actions: <Widget>[
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+
+                                onPressed: () async {
+                                  bool tempBool = await getJobStatus('${data[index]['job_id']}', 'ACCEPTED');
+                                  //print(tempBool);
+                                  if(tempBool == false) {
+                                    Future.delayed(Duration.zero, () =>
+                                        showDialog<void>(
+                                          context: context,
+                                          barrierDismissible: false, // user must tap button!
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('ERROR'),
+                                              content: const SingleChildScrollView(
+                                                child: ListBody(
+                                                  children: <Widget>[
+                                                    Text('Unable to start delivery.'),
+                                                    Text('The selected Advertisement may have already started by the driver.'),
+                                                    Text('Please refresh and try again.'),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('Okay'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        )
+                                    );
+                                    Navigator.of(context).pop();
+                                  } else {
+                                    print("IVE BEEN STARTED BY MERCHANT");
+                                    loadingOverlay();
+                                    setState(() {
+                                      startDelivery('${data[index]['job_id']}');
+                                    });
+
+                                    Navigator.of(context).pop();
+                                  }
+                                }, child: const Text("Yes")),
+
+                            TextButton(onPressed: (){
+                              Navigator.of(context).pop();
+                            }, child: const Text("No")),
+                          ],
+                        )
+                    )
+                    },
+                    child: Text("START DELIVERY", textAlign: TextAlign.center, style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
+          ]else if (data[index]['job_status'] == 'DRIVER_START') ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                FittedBox(
+                  //width: 100,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    onPressed: () => { showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text("Confirm Start of Delivery"),
+                          content: const Text("The Driver has started the delivery.\nHas the driver picked up the goods?"),
+                          actions: <Widget>[
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                                onPressed: () async {
+                                  bool tempBool = await getJobStatus('${data[index]['job_id']}', 'DRIVER_START');
+                                  if(tempBool == false) {
+                                    Future.delayed(Duration.zero, () =>
+                                        showDialog<void>(
+                                          context: context,
+                                          barrierDismissible: false, // user must tap button!
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('ERROR'),
+                                              content: const SingleChildScrollView(
+                                                child: ListBody(
+                                                  children: <Widget>[
+                                                    Text('Unable to confirm start of delivery.'),
+                                                    //Text('The selected Advertisement may have already started by the driver.'),
+                                                    Text('Please refresh and try again.'),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('Confirm'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        )
+                                    );
+                                    Navigator.of(context).pop();
+                                  } else {
+                                    loadingOverlay();
+                                    setState(() {
+                                      confirmStartDelivery('${data[index]['job_id']}');
+                                    });
+                                    print("IVE BEEN CONFIRM STARTED");
+                                    Navigator.of(context).pop();
+                                  }
+                                }, child: const Text("Yes")),
+
+                            TextButton(onPressed: (){
+                              Navigator.of(context).pop();
+                            }, child: const Text("No")),
+                          ],
+                        )
+                    )
+                    },
+                    child: Text("CONFIRM START OF DELIVERY", textAlign: TextAlign.center, style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
+          ] else if (data[index]['job_status'] == 'DELIVERED') ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                FittedBox(
+                  //width: 100,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    onPressed: () => { showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text("Proof of Delivery"),
+                          content: const Text("The Driver has delivered the goods.\nView the proof of delivery and confirm it has been delivered."),
+                          actions: <Widget>[
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                                onPressed: () async {
+                                  bool tempBool = await getJobStatus('${data[index]['job_id']}', 'DELIVERED');
+                                  if(tempBool == false) {
+                                    Future.delayed(Duration.zero, () =>
+                                        showDialog<void>(
+                                          context: context,
+                                          barrierDismissible: false, // user must tap button!
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('ERROR'),
+                                              content: const SingleChildScrollView(
+                                                child: ListBody(
+                                                  children: <Widget>[
+                                                    Text('Unable to confirm delivery of goods.'),
+                                                    //Text('The selected Advertisement may have already started by the driver.'),
+                                                    Text('Please refresh and try again.'),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('Okay'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        )
+                                    );
+                                    Navigator.of(context).pop();
+                                  } else {
+                                    loadingOverlay();
+                                    setState(() {
+                                      confirmEndDelivery('${data[index]['job_id']}');
+                                    });
+                                    print("IVE BEEN FINISHED");
+                                    Navigator.of(context).pop();
+                                  }
+                                }, child: const Text("Confirm")),
+
+                            TextButton(onPressed: (){
+                              Navigator.of(context).pop();
+                            }, child: const Text("Cancel")),
+                          ],
+                        )
+                    )
+                    },
+                    child: Text("PROOF OF DELIVERY", textAlign: TextAlign.center, style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],

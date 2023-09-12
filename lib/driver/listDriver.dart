@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../constants.dart';
+import '../navBar.dart';
 
 class listDriver extends StatefulWidget {
   const listDriver({Key? key}) : super(key: key);
@@ -259,7 +260,7 @@ class _listDriverState extends State<listDriver> {
           buildExpandedRow(data, index, 'Buyer Name', data[index]['contact_name'].toString(), textColor),
           buildExpandedRow(data, index, 'Buyer Contact Number', data[index]['contact_number'].toString(), textColor),
           buildExpandedRow(data, index, 'Delivery Cost', "\$${data[index]['cost']}", textColor),
-           SizedBox(height: 10,),
+          SizedBox(height: 10,),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -276,13 +277,43 @@ class _listDriverState extends State<listDriver> {
                           ElevatedButton(
                               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                               onPressed: (){
-                                loadingOverlay();
-                                setState(() {
-                                  acceptJob('${data[index]['job_id']}');
-                                   getHistory();
-                                });
-                                print("IVE BEEN ACCEPTED");
-                                Navigator.of(context).pop();
+                                bool tempBool =  navBar.regoNumber == '' ? false : true;//getJobStatus('${data[index]['job_id']}', 'DELIVERED');
+                                if(tempBool == false) {
+                                  showDialog<void>(
+                                    context: context,
+                                    barrierDismissible: false, // user must tap button!
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('ERROR'),
+                                        content: const SingleChildScrollView(
+                                          child: ListBody(
+                                            children: <Widget>[
+                                              Text('Unable to accept advertisment.'),
+                                              Text('Please ensure you have a vehicle selected.'),
+                                            ],
+                                          ),
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text('Okay'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  loadingOverlay();
+                                  setState(() {
+                                    acceptJob('${data[index]['job_id']}');
+                                    getHistory();
+                                  });
+                                  print("IVE BEEN ACCEPTED");
+                                  Navigator.of(context).pop();
+                                }
                               }, child: const Text("Accept")),
 
                           TextButton(onPressed: (){
