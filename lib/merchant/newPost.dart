@@ -13,15 +13,15 @@ class newPost extends StatefulWidget {
 
 class _newPostState extends State<newPost> {
   final _formKey = GlobalKey<FormState>();
-  var _goodsTypeController = TextEditingController();
-  var _weightController = TextEditingController();
-  var _sizeController = TextEditingController();
-  var _addressPickupController = TextEditingController();
-  var _addressDeliveryController = TextEditingController();
-  var _goodsQuantityController = TextEditingController();
-  var _contactNameController = TextEditingController();
-  var _contactNumberController = TextEditingController();
-  var _pickupTimeController = TextEditingController();
+  final _goodsTypeController = TextEditingController();
+  final _weightController = TextEditingController();
+  final _sizeController = TextEditingController();
+  final _addressPickupController = TextEditingController();
+  final _addressDeliveryController = TextEditingController();
+  final _goodsQuantityController = TextEditingController();
+  final _contactNameController = TextEditingController();
+  final _contactNumberController = TextEditingController();
+  final _pickupTimeController = TextEditingController();
   bool needsFridge = false;
 
   @override
@@ -40,6 +40,11 @@ class _newPostState extends State<newPost> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
+                SizedBox(height: 16.0),
+                const Text(
+                  'Package Details',
+                  style: TextStyle(fontSize: 20),
+                ),
                 TextFormField(
                   controller: _goodsTypeController,
                   decoration: const InputDecoration(labelText: 'Goods Type'),
@@ -66,7 +71,7 @@ class _newPostState extends State<newPost> {
                   controller: _weightController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                      labelText: 'Weight in kilograms (each item)'),
+                      labelText: 'Weight in grams (each item)'),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a weight';
@@ -106,6 +111,11 @@ class _newPostState extends State<newPost> {
                       ),
                     ],
                   ),
+                ),
+                SizedBox(height: 16.0),
+                const Text(
+                  'Delivery Details',
+                  style: TextStyle(fontSize: 20),
                 ),
                 TextFormField(
                   controller: _addressPickupController,
@@ -161,9 +171,7 @@ class _newPostState extends State<newPost> {
                       return 'Please enter a pickup time';
                     }
                     //additional validation for time in the correct format for time without time zone as stored in a postgresql database
-                    if (value.length != 5 ||
-                        int.parse(value.substring(0, 2)) > 23 ||
-                        int.parse(value.substring(3, 5)) > 59) {
+                    if (DateTime.parse(value) == null) {
                       return 'Please enter a valid time';
                     }
                     return null;

@@ -184,10 +184,21 @@ class _RegisterDriverState extends State<RegisterDriver> {
                 // delivery experience
                 TextFormField(
                   controller: _deliveryExperienceController,
-                  decoration: InputDecoration(labelText: 'Delivery Experience'),
+                  decoration: InputDecoration(
+                      labelText: 'Years of Delivery Experience'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your delivery experience in years.';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _driverLicenseNumberController,
+                  decoration: InputDecoration(labelText: 'License Number'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your drivers license number.';
                     }
                     return null;
                   },
@@ -350,6 +361,7 @@ class _RegisterDriverState extends State<RegisterDriver> {
                                     emergencyContactNumber,
                                 'company_name': companyName,
                                 'delivery_experience': deliveryExperience,
+                                'license_number': driverLicenseNumber,
                               }
                             ]);
                           } else {
