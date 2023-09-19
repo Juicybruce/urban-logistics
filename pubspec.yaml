@@ -41,7 +41,7 @@ dependencies:
   #geocoding: ^2.1.0
   location: ^4.4.0
   flutter_map: ^5.0.0
-
+  flutter_map_location_marker: 7.0.5
 
 dev_dependencies:
   flutter_test:

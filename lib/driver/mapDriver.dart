@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 //location
 import 'package:location/location.dart';
@@ -32,6 +35,7 @@ class _mapDriverState extends State<mapDriver> {
 
     ////update the user's location before building the map
     updateLocation();
+    //update the user's location EVERY 2 seconds
 
     return Scaffold(
 
@@ -39,6 +43,7 @@ class _mapDriverState extends State<mapDriver> {
 
       //center the map on the user's location button
       floatingActionButton: FloatingActionButton(
+        heroTag: "btn1",
         onPressed: () async {
           final LocationData value = await Location().getLocation();
           mapController.move(LatLng(value.latitude!, value.longitude!), 13);
@@ -66,7 +71,9 @@ class _mapDriverState extends State<mapDriver> {
                     'mapStyleId': AppConstants.mapBoxStyleId,
                     'accessToken': AppConstants.mapBoxAccessToken,
                   },
+
                 ),
+              CurrentLocationLayer(),
             ],
 
 
