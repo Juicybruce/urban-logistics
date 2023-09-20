@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -18,9 +16,6 @@ class mapDriver extends StatefulWidget {
 }
 
 class _mapDriverState extends State<mapDriver> {
-
-
-
   @override
   void initState() {
     super.initState();
@@ -35,12 +30,8 @@ class _mapDriverState extends State<mapDriver> {
 
     ////update the user's location before building the map
     updateLocation();
-    //update the user's location EVERY 2 seconds
 
     return Scaffold(
-
-
-
       //center the map on the user's location button
       floatingActionButton: FloatingActionButton(
         heroTag: "btn1",
@@ -60,7 +51,6 @@ class _mapDriverState extends State<mapDriver> {
               maxZoom: 18,
               zoom: 13,
               center: myLocation,
-
             ),
             nonRotatedChildren: [
               TileLayer(
@@ -75,9 +65,6 @@ class _mapDriverState extends State<mapDriver> {
                 ),
               CurrentLocationLayer(),
             ],
-
-
-
           ),
         ],
       ),

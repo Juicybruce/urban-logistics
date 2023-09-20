@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'constants.dart';
 import 'driver/activeDriver.dart';
@@ -11,6 +12,8 @@ import 'merchant/historyMerchant.dart';
 import 'merchant/listMerchant.dart';
 import 'merchant/mapMerchant.dart';
 import 'merchant/newPost.dart';
+import 'dart:async';
+
 
 class navBar extends StatefulWidget {
   const navBar({Key? key}) : super(key: key);
@@ -20,29 +23,118 @@ class navBar extends StatefulWidget {
 }
 
 class _navBarState extends State<navBar> {
+  bool isLoading = false;
+  bool isMerchant = true;
   bool driverAvailable = false;
   int currentTab = 0;
-
   User? user;
+
   Session? session;
+  String? userID;
+  String subTitle = "";
+  String? uname;
 
   @override
   void initState() {
+    isLoading = true;
     super.initState();
     user = supabase.auth.currentUser;
     session = supabase.auth.currentSession;
+    userID = user?.id;
+    getUserDetails();
   }
 
-  String userType =
-      //'driver'; // TODO change this to userprefs or something or get user type from db/ Current accepted userTypes are 'merchant' and 'driver'(well anything but merchant)
-      'driver';
-  late List<Widget> screens = getScreens(userType);
 
+  FutureOr popChangeVehicle(dynamic value){
+    setState(() {
+      getUserDetails();
+    });
+  }
+
+  Future<void> setAvailable() async{
+ await supabase
+    .from('drivers')
+    .update({ 'available': true})
+    .eq('driver_id', userID);
+  }
+
+  Future<void> setUnavailable() async{
+ await supabase
+    .from('drivers')
+    .update({ 'available': false})
+    .eq('driver_id', userID);
+  }
+
+  Future<void> getUserDetails() async {
+  var response = await supabase
+      .from('suppliers')
+      .select('first_name, last_name, business_name')
+      .eq('supplier_id', userID);
+  if (response.length == 0){
+    response = await supabase
+        .from('drivers')
+        .select('first_name, last_name, trucks!drivers_current_vehicle_fkey(license_plate)')
+        .eq('driver_id', userID);
+
+    print(response[0].length);
+    if(response[0]["trucks"] != null) {
+      var tempString  = response[0]['trucks']['license_plate'].toString();
+      subTitle = tempString;
+    }
+    setState(() {
+      isMerchant = false;
+    });
+  }else{
+    subTitle = response[0]['business_name'].toString();
+  }
+  final String fname = response[0]['first_name'].toString();
+  final String lname = response[0]['last_name'].toString();
+  setState(() {
+    screens = getScreens(isMerchant);
+    currentScreen = screens[currentTab];
+  });
+  uname = "$fname $lname";
+  //await Future.delayed(const Duration(seconds: 3));
+  setState(() {
+    isLoading = false;
+  });
+  //return "$fname $lname";
+  }
+
+  late List<Widget> screens = getScreens(isMerchant);
   final PageStorageBucket bucket = PageStorageBucket();
   late Widget currentScreen = screens[0];
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      const String iconPath = 'assets/truck.svg';
+      return  Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      iconPath,
+                      colorFilter:
+                      ColorFilter.mode(Colors.pinkAccent, BlendMode.srcIn),
+                      semanticsLabel: 'Truck Icon',
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Urban Logistics',
+                      style: TextStyle(fontSize: 40),
+                    ),
+                    const SizedBox(height: 20),
+                    CircularProgressIndicator()
+                  ],
+                )),
+          ));
+    }
+
     return Scaffold(
       body: PageStorage(
         child: currentScreen,
@@ -122,7 +214,7 @@ class _navBarState extends State<navBar> {
                       color: currentTab == 2 ? Colors.white : Colors.black,
                     ),
                     Text(
-                      'Activity',
+                      'Current',
                       style: TextStyle(
                           color: currentTab == 2 ? Colors.white : Colors.black),
                     ),
@@ -159,18 +251,19 @@ class _navBarState extends State<navBar> {
     );
   }
 
+
   AppBar buildAppBar() {
-    if (userType == 'merchant') {
+    if (isMerchant == true) {
+     // print("merchant");
       return AppBar(
         centerTitle: true,
         title: Column(
-          children: const [
-            Text(
-              'MERCHANT NAME',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text('<mechant business name>', style: TextStyle(fontSize: 13)),
-          ],
+            children: [
+          //buildUsername(),
+              //Text(_username, style: TextStyle(fontSize: 13)),
+              Text(uname!, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+             Text(subTitle, style: TextStyle(fontSize: 13)),
+           ],
         ),
         actions: [
           PopupMenuButton(
@@ -184,9 +277,12 @@ class _navBarState extends State<navBar> {
                   ),
                 ];
               },
+              
               onSelected: (value) {
                 if (value == 0) {
                   print('IM LOGGING OUT');
+                  supabase.auth.signOut();
+                  Navigator.of(context).popAndPushNamed('/login');
                 }
               }),
         ],
@@ -202,12 +298,11 @@ class _navBarState extends State<navBar> {
         backgroundColor: Colors.green,
         centerTitle: true,
         title: Column(
-          children: const [
-            Text(
-              'DRIVER NAME',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text('<vehicle rego number>', style: TextStyle(fontSize: 13)),
+          children: [
+            Text(uname!, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(subTitle, style: TextStyle(fontSize: 13)),
+            //buildUsername(),
+            //Text('<vehicle rego number>', style: TextStyle(fontSize: 13)),
           ],
         ),
         actions: [
@@ -234,21 +329,23 @@ class _navBarState extends State<navBar> {
                 if (value == 0) {
                   setState(() {
                     driverAvailable = true;
-                    //TODO: set driver to available in db
+                    setAvailable();
                   });
                   print('IM AVAILABLE.');
                 } else if (value == 1) {
                   setState(() {
                     driverAvailable = false;
-                    //TODO: set driver to unavailable in db
+                    setUnavailable();
                   });
                   print('IM UNAVAILABLE.');
                 } else if (value == 2) {
                   setState(() {
                     driverAvailable = false;
-                    //TODO: set driver to unavailable in db
+                    setUnavailable();
                   });
                   print('IM LOGGING OUT');
+                  supabase.auth.signOut();
+                  Navigator.of(context).popAndPushNamed('/login');
                 }
               }),
         ],
@@ -257,12 +354,11 @@ class _navBarState extends State<navBar> {
       return AppBar(
         centerTitle: true,
         title: Column(
-          children: const [
-            Text(
-              'DRIVER NAME',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text('<vehicle rego number>', style: TextStyle(fontSize: 13)),
+          children:  [
+            Text(uname!, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(subTitle, style: TextStyle(fontSize: 13)),
+            // buildUsername(),
+            // Text('<vehicle rego number>', style: TextStyle(fontSize: 13)),
           ],
         ),
         actions: [
@@ -289,19 +385,19 @@ class _navBarState extends State<navBar> {
                 if (value == 0) {
                   setState(() {
                     driverAvailable = true;
-                    //TODO: set driver to available in db
+                    setAvailable();
                   });
                   print('IM AVAILABLE.');
                 } else if (value == 1) {
                   setState(() {
                     driverAvailable = false;
-                    //TODO: set driver to unavailable in db
+                    setUnavailable();
                   });
                   print('IM UNAVAILABLE.');
                 } else if (value == 2) {
                   setState(() {
                     driverAvailable = false;
-                    //TODO: set driver to unavailable in db
+                    setUnavailable();
                   });
                   print('IM LOGGING OUT');
                   supabase.auth.signOut();
@@ -314,7 +410,7 @@ class _navBarState extends State<navBar> {
   }
 
   FloatingActionButton buildFloatingActionButton() {
-    if (userType == 'merchant') {
+    if (isMerchant == true) {
       return FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
@@ -326,7 +422,7 @@ class _navBarState extends State<navBar> {
       return FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const changeVehicle()));
+              MaterialPageRoute(builder: (context) => const changeVehicle())).then(popChangeVehicle);
         },
         child: const Icon(Icons.compare_arrows),
       );
@@ -334,8 +430,8 @@ class _navBarState extends State<navBar> {
   }
 }
 
-List<Widget> getScreens(String userType) {
-  if (userType == 'merchant') {
+List<Widget> getScreens(bool isMerchant) {
+  if (isMerchant == true) {
     return [
       const mapMerchant(),
       const listMerchant(),
@@ -351,3 +447,5 @@ List<Widget> getScreens(String userType) {
     ];
   }
 }
+
+
