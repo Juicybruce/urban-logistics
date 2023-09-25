@@ -243,7 +243,8 @@ class _listDriverState extends State<listDriver> {
       return Column(
         //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 10,),
+          //SizedBox(height: 10,),
+          Divider( thickness: 1, color: Colors.black,),
           buildExpandedRow(data, index, 'Merchant Name', '${data[index]['suppliers']['first_name']} ${data[index]['suppliers']['last_name']}', textColor),
           buildExpandedRow(data, index, 'Business Name', data[index]['suppliers']['business_name'].toString(), textColor),
           buildExpandedRow(data, index, 'Merchant Contact Number', data[index]['suppliers']['contact_phone'].toString(), textColor),

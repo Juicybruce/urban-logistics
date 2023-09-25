@@ -211,8 +211,10 @@ class _listMerchantState extends State<listMerchant> {
       Color? textColor =
           data[index]['job_status'] == 'POSTED' ? Colors.white : Colors.black;
       return Column(
+
         //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Divider( thickness: 1, color: textColor,),
           buildExpandedRow(data, index, 'Distance',
               data[index]['distance'].toString(), textColor),
           buildExpandedRow(data, index, 'Contact Number',

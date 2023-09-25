@@ -310,7 +310,8 @@ class _activeMerchantState extends State<activeMerchant> {
       return Column(
         //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 10,),
+          //SizedBox(height: 10,),
+          Divider( thickness: 1, color: textColor,),
           buildExpandedRow(data, index, 'Pickup Address', data[index]['pickup_address'].toString(), textColor),
           buildExpandedRow(data, index, 'Delivery Address', data[index]['dropoff_address'].toString(), textColor),
           buildExpandedRow(data, index, 'Distance', data[index]['distance'].toString(), textColor),
@@ -555,7 +556,13 @@ class _activeMerchantState extends State<activeMerchant> {
                         context: context,
                         builder: (BuildContext context) => AlertDialog(
                           title: const Text("Proof of Delivery"),
-                          content: const Text("The Driver has delivered the goods.\nView the proof of delivery and confirm it has been delivered."),
+                          content: Column(mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                            const Text("The Driver has delivered the goods.\nView the proof of delivery and confirm it has been delivered."),
+                              SizedBox(height: 10,),
+                              Text('Signee\'s Name', style: TextStyle(color: textColor, fontSize: 15 ,fontWeight: FontWeight.bold),),
+                              Text(data[index]['signee_name'].toString(), style: TextStyle(color: textColor, fontSize: 15 ),),
+                          ]),
                           actions: <Widget>[
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
