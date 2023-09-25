@@ -6,7 +6,6 @@ import 'package:location/location.dart';
 
 import '../constants.dart';
 
-
 class mapDriver extends StatefulWidget {
   const mapDriver({Key? key}) : super(key: key);
 
@@ -15,15 +14,11 @@ class mapDriver extends StatefulWidget {
 }
 
 class _mapDriverState extends State<mapDriver> {
-
-
-
   @override
   void initState() {
     super.initState();
-
-
   }
+
   final mapController = MapController();
   @override
   Widget build(BuildContext context) {
@@ -34,9 +29,6 @@ class _mapDriverState extends State<mapDriver> {
     updateLocation();
 
     return Scaffold(
-
-
-
       //center the map on the user's location button
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -55,35 +47,32 @@ class _mapDriverState extends State<mapDriver> {
               maxZoom: 18,
               zoom: 13,
               center: myLocation,
-
             ),
             nonRotatedChildren: [
               TileLayer(
-
-                  urlTemplate: 'https://api.mapbox.com/styles/v1/leigh3211/{mapStyleId}/tiles/256/{z}/{x}/{y}@2x?access_token={accessToken}',
-                  additionalOptions: const {
-                    //from ../constants.dart
-                    'mapStyleId': AppConstants.mapBoxStyleId,
-                    'accessToken': AppConstants.mapBoxAccessToken,
-                  },
-                ),
+                urlTemplate:
+                    'https://api.mapbox.com/styles/v1/leigh3211/{mapStyleId}/tiles/256/{z}/{x}/{y}@2x?access_token={accessToken}',
+                additionalOptions: const {
+                  //from ../constants.dart
+                  'mapStyleId': AppConstants.mapBoxStyleId,
+                  'accessToken': AppConstants.mapBoxAccessToken,
+                },
+              ),
             ],
-
-
-
           ),
         ],
       ),
     );
   }
+
   //update the user's location on the map`
   void updateLocation() {
     setState(() {
       //get the user's location using the location package
-      Location().getLocation().then((LocationData value) {
-        mapController.move(LatLng(value.latitude!, value.longitude!), 13);
-        //AppConstants.myLocation = LatLng(value.latitude!, value.longitude!);
-      });
+      // Location().getLocation().then((LocationData value) {
+      //   mapController.move(LatLng(value.latitude!, value.longitude!), 13);
+      //   //AppConstants.myLocation = LatLng(value.latitude!, value.longitude!);
+      // });
     });
   }
 }
