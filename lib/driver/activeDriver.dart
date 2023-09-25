@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:intl/intl.dart';
 import '../constants.dart';
 
 class activeDriver extends StatefulWidget {
@@ -98,6 +98,16 @@ class _activeDriverState extends State<activeDriver> {
     print(response[0]['job_status'] == jobStatus);
     return response[0]['job_status'] == jobStatus ?  true :  false;
 
+  }
+
+  String convertToDateTime(DateTime DT){
+    if(DT != null) {
+      DT = DT.toLocal();
+      String temp = DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
+      return temp;
+    } else {
+      return "";
+    }
   }
 
   OverlayEntry? overlay;
@@ -239,7 +249,7 @@ class _activeDriverState extends State<activeDriver> {
                   child: Column(
                     children : [
                       //Text('${data[index]['pickup_time']}', textAlign: TextAlign.start, style: TextStyle( fontSize: 14 ),),
-                      Text('DD/MM/YYYY\nHH:MM AA', textAlign: TextAlign.start, style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.bold),),
+                      Text(convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textAlign: TextAlign.start, style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.bold),),
                     ],
                   ),
                 ),
@@ -316,16 +326,19 @@ class _activeDriverState extends State<activeDriver> {
           buildExpandedRow(data, index, 'Merchant Name', '${data[index]['suppliers']['first_name']} ${data[index]['suppliers']['last_name']}', textColor),
           buildExpandedRow(data, index, 'Business Name', data[index]['suppliers']['business_name'].toString(), textColor),
           buildExpandedRow(data, index, 'Merchant Contact Number', data[index]['suppliers']['contact_phone'].toString(), textColor),
+          SizedBox(height: 10,),
           buildExpandedRow(data, index, 'Pickup Address', data[index]['pickup_address'].toString(), textColor),
           buildExpandedRow(data, index, 'Delivery Address', data[index]['dropoff_address'].toString(), textColor),
           buildExpandedRow(data, index, 'Distance', data[index]['distance'].toString(), textColor),
-          buildExpandedRow(data, index, 'Collection Time', data[index]['pickup_time'].toString(), textColor),
-          buildExpandedRow(data, index, 'Delivery Time', data[index]['delivery_time'].toString(), textColor),
+          buildExpandedRow(data, index, 'Collection Time', convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textColor),
+          buildExpandedRow(data, index, 'Delivery Time', convertToDateTime(DateTime.parse(data[index]['delivery_time'].toString())), textColor),
+          SizedBox(height: 10,),
           buildExpandedRow(data, index, 'Goods', data[index]['goods_type'].toString(), textColor),
           buildExpandedRow(data, index, 'Quantity', data[index]['quantity'].toString(), textColor),
           buildExpandedRow(data, index, 'Total Weight', data[index]['weight'].toString(), textColor),
           buildExpandedRow(data, index, 'Size', data[index]['size'].toString(), textColor),
           buildExpandedRow(data, index, 'Cooling Required', data[index]['${cooling}'].toString(), textColor),
+          SizedBox(height: 10,),
           buildExpandedRow(data, index, 'Buyer Name', data[index]['contact_name'].toString(), textColor),
           buildExpandedRow(data, index, 'Buyer Contact Number', data[index]['contact_number'].toString(), textColor),
           buildExpandedRow(data, index, 'Delivery Cost', "\$${data[index]['cost']}", textColor),
