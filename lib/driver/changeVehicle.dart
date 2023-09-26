@@ -88,7 +88,10 @@ class _changeVehicleState extends State<changeVehicle> {
                 } else if (snapshot.hasData) {
                   final List<dynamic> data = snapshot.data as List<dynamic>;
                   //filter the data using the driver id
-                  final List<dynamic> filteredData = data.where((element) => element['driver_id'] == uid).toList();
+                  final List<dynamic> filteredData1 = data.where((element) => element['driver_id'] == uid).toList();
+                  //filter the filteredData to show only the vehicles that are not archived
+                  final List<dynamic> filteredData = filteredData1.where((element) => element['archived'] == false).toList();
+
                   return ListView.builder(
                     itemCount: filteredData.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -144,7 +147,12 @@ class _changeVehicleState extends State<changeVehicle> {
                                                           print('Could not set driver active vehicle to null');
                                                           print(update.message);
                                                         }
-                                                        final response = await _client.from('trucks').delete().match({'truck_id': vehicle['truck_id']});
+                                                        //final response = await _client.from('trucks').delete().match({'truck_id': vehicle['truck_id']});
+                                                        //set truck archived to true
+                                                        final response = await _client.from('trucks').update({'archived': true}).match({'truck_id': vehicle['truck_id']});
+
+
+
                                                         if (response == null) {
                                                           print('Vehicle deleted successfully');
                                                         } else {
@@ -154,7 +162,9 @@ class _changeVehicleState extends State<changeVehicle> {
 
                                                       } else {
                                                         print('Driver active vehicle not set to null');
-                                                        final response = await _client.from('trucks').delete().match({'truck_id': vehicle['truck_id']});
+                                                        //final response = await _client.from('trucks').delete().match({'truck_id': vehicle['truck_id']});
+                                                        final response = await _client.from('trucks').update({'archived': true}).match({'truck_id': vehicle['truck_id']});
+
                                                         if (response == null) {
                                                           print('Vehicle deleted successfully');
                                                         } else {
