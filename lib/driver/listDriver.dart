@@ -55,6 +55,46 @@ class _listDriverState extends State<listDriver> {
     getHistory();
   }
 
+  Future<bool> getJobs(DateTime start, DateTime end) async {
+    //await Future.delayed(const Duration(seconds: 0));
+    final response = await supabase
+        .from('advertisments')
+        .select('pickup_time, delivery_time')
+        .neq('job_status', 'CANCELLED')
+        .neq('job_status', 'COMPLETE')
+        .eq('driver_id', userID);
+    //print(response);
+    if (response.length == 0) {
+      return true;
+    } else {
+      int sJ = start.millisecondsSinceEpoch;
+      int eJ = end.millisecondsSinceEpoch;
+      for (dynamic time in response as List) {
+        int sA = DateTime
+            .parse(time['pickup_time'].toString())
+            .millisecondsSinceEpoch;
+        int eA = DateTime
+            .parse(time['delivery_time'].toString())
+            .millisecondsSinceEpoch;
+        print(sA);
+        print(eA);
+        print(sJ);
+        print(eJ);
+        print('\n');
+
+        if ((sA < sJ && sJ < eA) ||
+            (sA < eJ && eJ < eA) ||
+            (sJ < sA && sA < eJ) ||
+            (sJ < eA && eA < eJ) ||
+            (sA == sJ && eA == eJ)) { // conditions need to be set so if true it returns false
+        return false;
+        }
+      }
+      return true;
+    }
+  }
+
+
   OverlayEntry? overlay;
 
   void loadingOverlay(){
@@ -290,7 +330,7 @@ class _listDriverState extends State<listDriver> {
                         actions: <Widget>[
                           ElevatedButton(
                               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                              onPressed: (){
+                              onPressed: () async {
                                 bool tempBool =  navBar.regoNumber == '' ? false : true;//getJobStatus('${data[index]['job_id']}', 'DELIVERED');
                                 if(tempBool == false) {
                                   showDialog<void>(
@@ -320,13 +360,45 @@ class _listDriverState extends State<listDriver> {
                                     },
                                   );
                                 } else {
-                                  loadingOverlay();
-                                  setState(() {
-                                    acceptJob('${data[index]['job_id']}');
-                                    getHistory();
-                                  });
+                                  //loadingOverlay();
+                                  bool res = await getJobs(DateTime.parse(data[index]['pickup_time'].toString()), DateTime.parse(data[index]['delivery_time'].toString()));
+                                  print(res);
+                                  if(res){
+                                setState(() {
+                                 acceptJob('${data[index]['job_id']}');
+                                 getHistory();
                                   print("IVE BEEN ACCEPTED");
-                                  Navigator.of(context).pop();
+                                });
+                                } else {
+                                    Future.delayed(Duration.zero, () => showDialog<void>(
+                                      context: context,
+                                      barrierDismissible: false, // user must tap button!
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('CONFLICTING JOBS'),
+                                          content: const SingleChildScrollView(
+                                            child: ListBody(
+                                              children: <Widget>[
+                                                Text('You are unable to accept this advertisement.'),
+                                                Text('You cannot accept advertisements that overlap with your currently accepted advertisements pickup-delivery times.'),
+                                              ],
+                                            ),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: const Text('Okay'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    )
+                                    );
+                               // print("ERRRO");
+                                }
+                                 Navigator.of(context).pop();
                                 }
                               }, child: const Text("Accept")),
 

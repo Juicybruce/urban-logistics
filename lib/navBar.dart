@@ -221,11 +221,14 @@ void setSubscribe(){
                         Icons.map,
                         color: currentTab == 0 ? Colors.white : Colors.black,
                       ),
-                      Text(
-                        'MAP',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: currentTab == 0 ? Colors.white : Colors.black),
+                      FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text(
+                          'MAP',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: currentTab == 0 ? Colors.white : Colors.black),
+                        ),
                       ),
                     ],
                   ),
@@ -249,18 +252,24 @@ void setSubscribe(){
                         color: currentTab == 1 ? Colors.white : Colors.black,
                       ),
                       if (isMerchant) ...[
-                        Text(
-                          'DRIVERS',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: currentTab == 1 ? Colors.white : Colors.black),
+                        FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
+                            'DRIVERS',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: currentTab == 1 ? Colors.white : Colors.black),
+                          ),
                         ),
                       ] else ...[
-                        Text(
-                          'JOB LIST',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: currentTab == 1 ? Colors.white : Colors.black),
+                        FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
+                            'JOB LIST',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: currentTab == 1 ? Colors.white : Colors.black),
+                          ),
                         ),
                       ]
                     ],
@@ -285,11 +294,14 @@ void setSubscribe(){
                         Icons.directions_car,
                         color: currentTab == 2 ? Colors.white : Colors.black,
                       ),
-                      Text(
-                        'MY JOBS',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: currentTab == 2 ? Colors.white : Colors.black),
+                      FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text(
+                          'MY JOBS',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: currentTab == 2 ? Colors.white : Colors.black),
+                        ),
                       ),
                     ],
                   ),
@@ -312,11 +324,14 @@ void setSubscribe(){
                         Icons.history,
                         color: currentTab == 3 ? Colors.white : Colors.black,
                       ),
-                      Text(
-                        'HISTORY',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: currentTab == 3 ? Colors.white : Colors.black),
+                      FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text(
+                          'HISTORY',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: currentTab == 3 ? Colors.white : Colors.black),
+                        ),
                       ),
                     ],
                   ),
