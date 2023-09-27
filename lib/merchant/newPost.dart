@@ -9,14 +9,19 @@ class newPost extends StatefulWidget {
   State<newPost> createState() => _newPostState();
 }
 
+// TODO - add validation for time, add calulation for distance and price
+
 class _newPostState extends State<newPost> {
   final _formKey = GlobalKey<FormState>();
-  var _goodsTypeController = TextEditingController();
-  var _weightController = TextEditingController();
-  var _sizeController = TextEditingController();
-  var _addressPickupController = TextEditingController();
-  var _addressDeliveryController = TextEditingController();
-  var _goodsQuantityController = TextEditingController();
+  final _goodsTypeController = TextEditingController();
+  final _weightController = TextEditingController();
+  final _sizeController = TextEditingController();
+  final _addressPickupController = TextEditingController();
+  final _addressDeliveryController = TextEditingController();
+  final _goodsQuantityController = TextEditingController();
+  final _contactNameController = TextEditingController();
+  final _contactNumberController = TextEditingController();
+  final _pickupTimeController = TextEditingController();
   bool needsFridge = false;
 
   @override
@@ -35,6 +40,11 @@ class _newPostState extends State<newPost> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
+                SizedBox(height: 16.0),
+                const Text(
+                  'Package Details',
+                  style: TextStyle(fontSize: 20),
+                ),
                 TextFormField(
                   controller: _goodsTypeController,
                   decoration: const InputDecoration(labelText: 'Goods Type'),
@@ -61,7 +71,7 @@ class _newPostState extends State<newPost> {
                   controller: _weightController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                      labelText: 'Weight in kilograms (each item)'),
+                      labelText: 'Weight in grams (each item)'),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a weight';
@@ -102,6 +112,11 @@ class _newPostState extends State<newPost> {
                     ],
                   ),
                 ),
+                SizedBox(height: 16.0),
+                const Text(
+                  'Delivery Details',
+                  style: TextStyle(fontSize: 20),
+                ),
                 TextFormField(
                   controller: _addressPickupController,
                   decoration:
@@ -120,6 +135,44 @@ class _newPostState extends State<newPost> {
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter an address';
+                    }
+                    return null;
+                  },
+                ),
+                //controller for contact_name, contact_number and pickup time
+                TextFormField(
+                  controller: _contactNameController,
+                  decoration: const InputDecoration(labelText: 'Contact Name'),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a contact name';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _contactNumberController,
+                  keyboardType: TextInputType.number,
+                  decoration:
+                      const InputDecoration(labelText: 'Contact Number'),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a contact number';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _pickupTimeController,
+                  decoration:
+                      const InputDecoration(labelText: 'Pickup Time (24hr)'),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a pickup time';
+                    }
+                    //additional validation for time in the correct format for time without time zone as stored in a postgresql database
+                    if (DateTime.parse(value) == null) {
+                      return 'Please enter a valid time';
                     }
                     return null;
                   },
@@ -144,6 +197,9 @@ class _newPostState extends State<newPost> {
                               'supplier_id': userID,
                               'cooling_required': needsFridge,
                               'job_status': 'POSTED',
+                              'contact_name': _contactNameController.text,
+                              'contact_number': _contactNumberController.text,
+                              'pickup_time': _pickupTimeController.text,
                             }
                           ]);
                         }
