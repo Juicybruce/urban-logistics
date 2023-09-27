@@ -210,7 +210,8 @@ class _mapDriverState extends State<mapDriver> {
   Future<List<LatLng>> getAddresses() async {
     //get the list of accepted jobs from the database
 
-    final response = await supabase.from('advertisments').select().eq('driver_id', user!.id).eq('job_status', 'ACCEPTED').execute();
+    final response = await supabase.from('advertisments').select().eq('driver_id', user!.id) .neq ('job_status', 'COMPLETE')
+        .neq ('job_status', 'CANCELLED').execute();
     //list if latlngs corresponding to the addresses
     List<LatLng> addresses = [];
     if (response.data == null) {
@@ -250,7 +251,11 @@ class _mapDriverState extends State<mapDriver> {
       Location().getLocation().then((LocationData value) {
         mapController.move(LatLng(value.latitude!, value.longitude!), 13);
         //AppConstants.myLocation = LatLng(value.latitude!, value.longitude!);
-      });
+        //update the user's location in the database driver table latitide and longitude
+        //if driver i active
+        supabase.from('drivers').update({'latitude': value.latitude, 'longitude': value.longitude}).eq('driver_id', user!.id).execute();
+
+        });
     });
   }
 }
