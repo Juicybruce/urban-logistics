@@ -76,12 +76,13 @@ class _mapDriverState extends State<mapDriver> {
     _addresses = await getAddresses();
     final LocationData value = await Location().getLocation();
     _myLocation = LatLng(value.latitude!, value.longitude!);
+    isLoading = false;
     setState(() {});
   }
   final mapController = MapController();
   @override
  Widget build(BuildContext context)  {
-    if (_addresses.isEmpty){
+    //if (_addresses.isEmpty){
       if (isLoading) {
         const String iconPath = 'assets/truck.svg';
         return Scaffold(
@@ -110,7 +111,7 @@ class _mapDriverState extends State<mapDriver> {
                     ],
                   )),
             ));
-      }
+
     }
     else{
       removeLoadingOverlay();
@@ -235,7 +236,7 @@ class _mapDriverState extends State<mapDriver> {
       }
       else {
         print("no latlng");
-        addresses.add(LatLng(0,0));
+        //addresses.add(LatLng(0,0));
 
       }
       //addresses.add(LatLng(latlng[0].latitude, latlng[0].longitude));
