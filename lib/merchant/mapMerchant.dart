@@ -32,7 +32,6 @@ import '../constants.dart';
 
 class mapMerchant extends StatefulWidget {
 
-
   const mapMerchant({Key? key}) : super(key: key);
 
   @override
@@ -43,7 +42,6 @@ class _mapMerchantState extends State<mapMerchant> {
   //final latlng = LatLng(latitude, longitude)
   final User? user = supabase.auth.currentUser;
   List<LatLng> _addresses = [];
-  List<LatLng> _truckLocations = [];
   List<dynamic> _truckLocations2 = [];
 
   LatLng _myLocation = LatLng(0, 0);
@@ -98,10 +96,10 @@ class _mapMerchantState extends State<mapMerchant> {
   }
   void loadInitialData() async {
     _addresses = await getAddresses();
-    _truckLocations = await getTruckLocations();
+    //_truckLocations = await getTruckLocations();
     _truckLocations2 = await getTruckLocations2();
     //final LocationData value = testAddresses() as LocationData;
-    final latlng = await testAddresses();
+    final latlng = await GetBisAddress();
     _myLocation = LatLng(latlng.latitude, latlng.longitude);
     setState(() {});
   }
@@ -145,20 +143,6 @@ class _mapMerchantState extends State<mapMerchant> {
     //set the map to GPS location
     final LatLng myLocation = LatLng(0, 0);
 
-    ////update the user's location before building the map
-   // updateLocation();
-    //get the list of addresses from acceepted jobs and display them on the map
-    //temp static list of addresses
-    /*String address = "1 Main Street, Hobart, Tasmania, Australia";
-    Future<List<geo.Location>> test = geo.GeocodingPlatform.instance.locationFromAddress(address);
-    //when the list of addresses is returned, print them to the console
-    //test first latlng
-    final List<LatLng> addresses;
-    addresses = [(LatLng(-41.199775,146.816293)), (LatLng(-41.206620,146.823149))];
-    //add test to addresses
-    //addresses.add(test.latitude, test.longitude);
-    test.then((value) => addresses.add(LatLng(value.first.latitude , value.first.longitude)));
-    test.then((value) =>print(addresses));*/
 
     return Scaffold(
       //center the map on the user's location button
@@ -176,11 +160,18 @@ class _mapMerchantState extends State<mapMerchant> {
           FlutterMap(
             mapController: mapController,
             options: MapOptions(
-              minZoom: 5,
-              maxZoom: 18,
+              //no zooming
+              minZoom: 13,
+              maxZoom: 13,
               zoom: 13,
               center: _myLocation,
-              onTap: (_, __) => PopupController().hideAllPopups()
+              //no pinch zooming
+              interactiveFlags: InteractiveFlag.pinchZoom |
+                  InteractiveFlag.doubleTapZoom |
+                  InteractiveFlag.drag,
+              //close popup when the map is moved
+
+              //onTap: (_, __) => PopupController().hideAllPopups()
             ),
             //close popup when the map is moved
             nonRotatedChildren: [
@@ -207,6 +198,8 @@ class _mapMerchantState extends State<mapMerchant> {
                         color: Colors.pinkAccent,
                         size: 30,
                       ),
+                      //no rotation
+                      rotate: false,
                     ),
                     //display the addresses on the map
                     for (var i = 0; i < _truckLocations2.length; i++)
@@ -226,8 +219,10 @@ class _mapMerchantState extends State<mapMerchant> {
                       ),
 
                   ],
+
                   popupController: PopupController(),
                     popupDisplayOptions: PopupDisplayOptions (
+
 
 
                     builder: (_, Marker marker){
@@ -249,7 +244,7 @@ class _mapMerchantState extends State<mapMerchant> {
   }
 
 
-  Future<LatLng> testAddresses() async {
+  Future<LatLng> GetBisAddress() async {
     //final String address = "1 Main Street, Hobart, Tasmania, Australia";
     //get the address from the database
     final response = await supabase.from('suppliers').select().eq('supplier_id', user!.id).execute();
@@ -306,42 +301,6 @@ class _mapMerchantState extends State<mapMerchant> {
   }
 
   //get trucks location from database
-  Future <List<LatLng>> getTruckLocations() async {
-    //get list of trucks latitudes and longitudes from database
-    final response = await supabase.from('drivers').select().eq('available', 'TRUE').execute();
-    //list if latlngs
-    List<LatLng> truckLocations = [];
-    //list if driver objects
-    List<dynamic> drivers = [];
-    if (response.data == null) {
-      //handle no data
-      return truckLocations;
-    }
-    //dynamic to int
-    final num length = response.data.length as num;
-    //filter out trucks that are not active
-    for (var i = 0; i < length; i++) {
-      //get the address from the database
-      //if the truck has a location in latitide and longitude
-      if (response.data![i]['latitude'] != null && response.data![i]['longitude'] != null){
-        final latitude = response.data![i]['latitude'].toString();
-        final longitude = response.data![i]['longitude'].toString();
-        //get the latlng from the address
-        final latlng = LatLng(double.parse(latitude), double.parse(longitude));
-        //add the whole driver object to the list
-        drivers.add(response.data![i]);
-
-
-        //add the latlng to the list
-        truckLocations.add(latlng);
-      }
-    }
-    print(truckLocations);
-    return truckLocations;
-
-
-
-  }
   Future <List<dynamic>> getTruckLocations2() async {
     //get list of trucks latitudes and longitudes from database
     final response = await supabase.from('drivers').select().eq('available', 'TRUE').execute();
@@ -369,23 +328,10 @@ class _mapMerchantState extends State<mapMerchant> {
 
       }
     }
-    print(drivers);
+    //print(drivers);
     return drivers;
-
-
-
   }
   //update the user's location on the map`
-  void updateLocation(LatLng latlng) {
-    setState(() {
-      //get the user's location using the location package
-        mapController.move(latlng, 13);
-        //AppConstants.myLocation = LatLng(value.latitude!, value.longitude!);
-        //update the user's location in the database driver table latitide and longitude
-        //if driver i active
-
-    });
-  }
 }
 class DriverMarker extends Marker {
   DriverMarker(this.driver, {
@@ -395,7 +341,10 @@ class DriverMarker extends Marker {
     height: height,
     point: point,
     builder: builder,
+    //stop from rotating
+    rotateAlignment: AnchorAlign.top.rotationAlignment,
     anchorPos: AnchorPos.align(AnchorAlign.top),
+
   );
   final dynamic driver;
 
