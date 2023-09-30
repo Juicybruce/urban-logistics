@@ -299,7 +299,7 @@ class _listDriverState extends State<listDriver> {
           buildExpandedRow(data, index, 'Pickup Address', data[index]['pickup_address'].toString(), textColor),
           SizedBox(height: 5,),
           buildExpandedRow(data, index, 'Delivery Address', data[index]['dropoff_address'].toString(), textColor),
-          buildExpandedRow(data, index, 'Distance', data[index]['distance'].toString(), textColor),
+          buildExpandedRow(data, index, 'Distance', "${data[index]['distance']} Km", textColor),
     if (data[index]['pickup_time'] != null)...[
           buildExpandedRow(data, index, 'Collection Time', convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textColor),
     ],

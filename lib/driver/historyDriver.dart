@@ -247,7 +247,7 @@ class _historyDriverState extends State<historyDriver> {
           buildExpandedRow(data, index, 'Pickup Address', data[index]['pickup_address'].toString(), textColor),
           SizedBox(height: 5,),
           buildExpandedRow(data, index, 'Delivery Address', data[index]['dropoff_address'].toString(), textColor),
-          buildExpandedRow(data, index, 'Distance', data[index]['distance'].toString(), textColor),
+          buildExpandedRow(data, index, 'Distance', "${data[index]['distance']} Km", textColor),
           SizedBox(height: 5,),
           buildExpandedRow(data, index, 'Collection Time', convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textColor),
           buildExpandedRow(data, index, 'Delivery Time', convertToDateTime(DateTime.parse(data[index]['delivery_time'].toString())), textColor),

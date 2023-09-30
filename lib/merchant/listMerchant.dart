@@ -216,13 +216,13 @@ class _listMerchantState extends State<listMerchant> {
         children: [
           Divider( thickness: 1, color: textColor,),
           buildExpandedRow(data, index, 'Distance',
-              data[index]['distance'].toString(), textColor),
+              "${data[index]['distance']} Km", textColor),
           buildExpandedRow(data, index, 'Contact Number',
               data[index]['contactnumber'].toString(), textColor),
           buildExpandedRow(data, index, 'Experience',
-              '${data[index]['dropoff_address']} Years', textColor),
-          buildExpandedRow(data, index, 'Rating',
-              data[index]['average_rating'].toString(), textColor),
+              '${data[index]['delivery_experience']} Years', textColor),
+          //buildExpandedRow(data, index, 'Rating',
+              //data[index]['average_rating'].toString(), textColor),
           if (data[index]['company_name'] != null) ...[
             buildExpandedRow(data, index, 'Pickup Company',
                 data[index]['company_name'].toString(), textColor),
@@ -238,7 +238,7 @@ class _listMerchantState extends State<listMerchant> {
             buildExpandedRow(data, index, 'Type of Truck',
                 data[index]['trucks']['truck_type'].toString(), textColor),
             buildExpandedRow(data, index, 'Maximum Capacity',
-                '${data[index]['trucks']['space_capacity']} L', textColor),
+                '${data[index]['trucks']['space_capacity']} M³', textColor),
             buildExpandedRow(data, index, 'Maximum Weight',
                 '${data[index]['trucks']['weight_capacity']} Kg', textColor),
             if (data[index]['trucks']['cooling_capacity'] == true) ...[
