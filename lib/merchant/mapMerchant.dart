@@ -156,13 +156,16 @@ class _mapMerchantState extends State<mapMerchant> {
 
     return Scaffold(
       //center the map on the user's location button
-      floatingActionButton: FloatingActionButton(
-        heroTag: "btn1",
-        onPressed: () async {
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 60),
+        child: FloatingActionButton(
+          heroTag: "btn1",
+          onPressed: () async {
 
-          mapController.move(_myLocation, 13);
-        },
-        child: const Icon(Icons.location_on),
+            mapController.move(_myLocation, 13);
+          },
+          child: const Icon(Icons.location_on),
+        ),
       ),
 
       body: Stack(

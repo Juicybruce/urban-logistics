@@ -136,13 +136,17 @@ class _mapDriverState extends State<mapDriver> {
 
     return Scaffold(
       //center the map on the user's location button
-      floatingActionButton: FloatingActionButton(
-        heroTag: "btn1",
-        onPressed: () async {
-          final LocationData value = await Location().getLocation();
-          mapController.move(LatLng(value.latitude!, value.longitude!), 13);
-        },
-        child: const Icon(Icons.location_on),
+
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 60.0),
+        child: FloatingActionButton(
+          heroTag: "btn1",
+          onPressed: () async {
+            final LocationData value = await Location().getLocation();
+            mapController.move(LatLng(value.latitude!, value.longitude!), 13);
+          },
+          child: const Icon(Icons.location_on),
+        ),
       ),
 
       body: Stack(

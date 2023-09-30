@@ -189,6 +189,7 @@ class _navBarState extends State<navBar> {
     }
 
     return Scaffold(
+      extendBody: true,
       body: PageStorage(
         child: currentScreen,
         bucket: bucket,
