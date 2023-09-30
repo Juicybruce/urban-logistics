@@ -96,13 +96,8 @@ class _historyDriverState extends State<historyDriver> {
   }
 
   String convertToDateTime(DateTime DT){
-    if(DT != null) {
-      DT = DT.toLocal();
-      String temp = DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
-      return temp;
-    } else {
-      return "";
-    }
+    DT = DT.toLocal();
+    return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
   }
 
   @override

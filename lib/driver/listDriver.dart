@@ -138,9 +138,8 @@ class _listDriverState extends State<listDriver> {
   }
 
   String convertToDateTime(DateTime DT){
-      DT = DT.toLocal();
-return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
-
+    DT = DT.toLocal();
+    return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
   }
 
   @override
@@ -215,7 +214,7 @@ return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
     //String subtitleText = "NOT EXPANDED";
     print(data[index]['job_status']);
     Color? cardColor = ColorConstants.driverListColor;
-
+    Color? textColor = Colors.white;
     return Card(
       child: ListTile(
         title: Padding(
@@ -231,7 +230,7 @@ return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
                   child: Column(
                     children : [
                       if (data[index]['pickup_time'] != null)...[
-                      Text(convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textAlign: TextAlign.start, style: TextStyle( fontSize: 16, fontWeight: FontWeight.bold),),
+                      Text(convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textAlign: TextAlign.start, style: TextStyle( fontSize: 16, fontWeight: FontWeight.bold, color: textColor),),
       ]
       ],
                   ),
@@ -241,8 +240,8 @@ return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
                 flex: 5,
                 child: Column(
                   children : [
-                    Text('${data[index]['goods_type']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 20 ,fontWeight: FontWeight.bold),),
-                    Text('${data[index]['pickup_address']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 16 ),),
+                    Text('${data[index]['goods_type']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 20 ,fontWeight: FontWeight.bold, color: textColor),),
+                    Text('${data[index]['pickup_address']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 16 , color: textColor),),
                   ],
                 ),
               ),
@@ -252,7 +251,7 @@ return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
                   fit: BoxFit.fitWidth,
                   child: Column(
                     children : [
-                      Text('${data[index]['job_status']}', textAlign: TextAlign.end, style: TextStyle( fontSize: 16 ,fontWeight: FontWeight.bold),),
+                      Text('${data[index]['job_status']}', textAlign: TextAlign.end, style: TextStyle( fontSize: 16 ,fontWeight: FontWeight.bold, color: textColor),),
                     ],
                   ),
                 ),
@@ -286,13 +285,13 @@ return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
     } else {
       String cooling = "";
       data[index]['cooling_required'] == 'TRUE' ? cooling = "Yes" : cooling = "No";
-      Color? textColor = data[index]['job_status']  == 'COMPLETE' ? Colors.black : Colors.black;
-
+      //Color? textColor = data[index]['job_status']  == 'COMPLETE' ? Colors.black : Colors.black;
+      Color? textColor = Colors.white;
       return Column(
         //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           //SizedBox(height: 10,),
-          Divider( thickness: 1, color: Colors.black,),
+          Divider( thickness: 1, color: textColor,),
           buildExpandedRow(data, index, 'Merchant Name', '${data[index]['suppliers']['first_name']} ${data[index]['suppliers']['last_name']}', textColor),
           buildExpandedRow(data, index, 'Business Name', data[index]['suppliers']['business_name'].toString(), textColor),
           buildExpandedRow(data, index, 'Merchant Contact Number', data[index]['suppliers']['contact_phone'].toString(), textColor),

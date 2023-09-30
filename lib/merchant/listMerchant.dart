@@ -231,7 +231,7 @@ class _listMerchantState extends State<listMerchant> {
             Padding(
               padding: const EdgeInsetsDirectional.only(top: 8.0, bottom: 4.0),
               child: Text('Vehicle Details',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
             ),
             buildExpandedRow(data, index, 'Vehicle Registration Number',
                 data[index]['trucks']['license_plate'].toString(), textColor),

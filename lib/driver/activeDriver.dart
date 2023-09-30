@@ -224,6 +224,9 @@ class _activeDriverState extends State<activeDriver> {
     if (data[index]['job_status']  == 'DELIVERED' || data[index]['job_status']  == 'DRIVER_START'){
       cardColor = ColorConstants.postedColor;
       textColor = Colors.white;
+    }else if (data[index]['job_status']  == 'MERCHANT_START'){
+      cardColor = ColorConstants.responseRequired;
+      textColor = Colors.white;
     }else{
       cardColor = ColorConstants.inProgressColor;
       textColor = Colors.black;
@@ -271,8 +274,10 @@ class _activeDriverState extends State<activeDriver> {
                     children : [
                       if (data[index]['job_status'] == 'ACCEPTED') ...[
                         Text('ACCEPTED', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
-                      ]else if (data[index]['job_status'] == 'DRIVER_START' || data[index]['job_status'] == 'MERCHANT_START') ...[
-                        Text('PENDING\nRESPONSE', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
+                      ]else if (data[index]['job_status'] == 'DRIVER_START') ...[
+                        Text('AWAITING\nRESPONSE', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
+                      ]else if (data[index]['job_status'] == 'MERCHANT_START') ...[
+                        Text('RESPONSE\nREQUIRED', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
                       ]else if (data[index]['job_status'] == 'EN_ROUTE') ...[
                         Text('IN\nPROGRESS', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
                       ]else if (data[index]['job_status'] == 'DELIVERED') ...[
@@ -310,7 +315,7 @@ class _activeDriverState extends State<activeDriver> {
         ],
       );
     } else {
-      Color? textColor = data[index]['job_status']  == 'DELIVERED' || data[index]['job_status']  == 'DRIVER_START' ? Colors.white : Colors.black;
+      Color? textColor = data[index]['job_status']  == 'ACCEPTED' || data[index]['job_status']  == 'EN_ROUTE' ? Colors.black : Colors.white;
       String cooling = "";
       data[index]['cooling_required'] == 'TRUE' ? cooling = "Yes" : cooling = "No";
 
