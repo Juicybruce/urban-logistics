@@ -71,7 +71,7 @@ class _newPostState extends State<newPost> {
                   controller: _weightController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                      labelText: 'Weight in grams (each item)'),
+                      labelText: 'Total Weight in grams (g)'),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a weight';
@@ -83,7 +83,7 @@ class _newPostState extends State<newPost> {
                   controller: _sizeController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                      labelText: 'Approximate total size'),
+                      labelText: 'Approximate total size (M³)'),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a approximate size ';

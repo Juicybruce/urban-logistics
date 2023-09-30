@@ -317,7 +317,7 @@ class _activeDriverState extends State<activeDriver> {
     } else {
       Color? textColor = data[index]['job_status']  == 'ACCEPTED' || data[index]['job_status']  == 'EN_ROUTE' ? Colors.black : Colors.white;
       String cooling = "";
-      data[index]['cooling_required'] == 'TRUE' ? cooling = "Yes" : cooling = "No";
+      cooling = data[index]['cooling_required'] == true ?  "Yes" :  "No";
 
       return Column(
         //crossAxisAlignment: CrossAxisAlignment.start,
@@ -329,6 +329,7 @@ class _activeDriverState extends State<activeDriver> {
           buildExpandedRow(data, index, 'Merchant Contact Number', data[index]['suppliers']['contact_phone'].toString(), textColor),
           SizedBox(height: 10,),
           buildExpandedRow(data, index, 'Pickup Address', data[index]['pickup_address'].toString(), textColor),
+          SizedBox(height: 5,),
           buildExpandedRow(data, index, 'Delivery Address', data[index]['dropoff_address'].toString(), textColor),
           buildExpandedRow(data, index, 'Distance', data[index]['distance'].toString(), textColor),
     if(data[index]['pickup_time'] != null) ...[
@@ -339,10 +340,10 @@ class _activeDriverState extends State<activeDriver> {
           ],
           SizedBox(height: 10,),
           buildExpandedRow(data, index, 'Goods', data[index]['goods_type'].toString(), textColor),
-          buildExpandedRow(data, index, 'Quantity', data[index]['quantity'].toString(), textColor),
-          buildExpandedRow(data, index, 'Total Weight', data[index]['weight'].toString(), textColor),
-          buildExpandedRow(data, index, 'Size', data[index]['size'].toString(), textColor),
-          buildExpandedRow(data, index, 'Cooling Required', data[index]['${cooling}'].toString(), textColor),
+          buildExpandedRow(data, index, 'Quantity', "${data[index]['quantity']} Unit(s)", textColor),
+          buildExpandedRow(data, index, 'Total Weight', '${data[index]['weight']} g', textColor),
+          buildExpandedRow(data, index, 'Size', '${data[index]['size']}M³', textColor),
+          buildExpandedRow(data, index, 'Cooling Required', cooling, textColor),
           SizedBox(height: 10,),
           buildExpandedRow(data, index, 'Buyer Name', data[index]['contact_name'].toString(), textColor),
           buildExpandedRow(data, index, 'Buyer Contact Number', data[index]['contact_number'].toString(), textColor),
