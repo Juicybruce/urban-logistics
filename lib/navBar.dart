@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'constants.dart';
 import 'driver/activeDriver.dart';
 import 'driver/changeVehicle.dart';
@@ -12,7 +15,6 @@ import 'merchant/historyMerchant.dart';
 import 'merchant/listMerchant.dart';
 import 'merchant/mapMerchant.dart';
 import 'merchant/newPost.dart';
-import 'dart:async';
 
 
 class navBar extends StatefulWidget {

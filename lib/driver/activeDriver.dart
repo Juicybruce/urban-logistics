@@ -101,13 +101,8 @@ class _activeDriverState extends State<activeDriver> {
   }
 
   String convertToDateTime(DateTime DT){
-    if(DT != null) {
       DT = DT.toLocal();
-      String temp = DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
-      return temp;
-    } else {
-      return "";
-    }
+      return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
   }
 
   OverlayEntry? overlay;
@@ -248,8 +243,9 @@ class _activeDriverState extends State<activeDriver> {
                   fit: BoxFit.fitWidth,
                   child: Column(
                     children : [
-                      //Text('${data[index]['pickup_time']}', textAlign: TextAlign.start, style: TextStyle( fontSize: 14 ),),
-                      Text(convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textAlign: TextAlign.start, style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.bold),),
+                      if(data[index]['pickup_time'] != null) ...[
+                        Text(convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textAlign: TextAlign.start, style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.bold),),
+                      ]
                     ],
                   ),
                 ),
@@ -330,8 +326,12 @@ class _activeDriverState extends State<activeDriver> {
           buildExpandedRow(data, index, 'Pickup Address', data[index]['pickup_address'].toString(), textColor),
           buildExpandedRow(data, index, 'Delivery Address', data[index]['dropoff_address'].toString(), textColor),
           buildExpandedRow(data, index, 'Distance', data[index]['distance'].toString(), textColor),
+    if(data[index]['pickup_time'] != null) ...[
           buildExpandedRow(data, index, 'Collection Time', convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textColor),
+    ],
+    if(data[index]['delivery_time'] != null) ...[
           buildExpandedRow(data, index, 'Delivery Time', convertToDateTime(DateTime.parse(data[index]['delivery_time'].toString())), textColor),
+          ],
           SizedBox(height: 10,),
           buildExpandedRow(data, index, 'Goods', data[index]['goods_type'].toString(), textColor),
           buildExpandedRow(data, index, 'Quantity', data[index]['quantity'].toString(), textColor),
