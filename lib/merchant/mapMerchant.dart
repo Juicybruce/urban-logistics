@@ -162,13 +162,11 @@ class _mapMerchantState extends State<mapMerchant> {
             options: MapOptions(
               //no zooming
               minZoom: 13,
-              maxZoom: 13,
+              maxZoom: 20,
               zoom: 13,
               center: _myLocation,
-              //no pinch zooming
-              interactiveFlags: InteractiveFlag.pinchZoom |
-                  InteractiveFlag.doubleTapZoom |
-                  InteractiveFlag.drag,
+
+              interactiveFlags:  ~InteractiveFlag.rotate,
               //close popup when the map is moved
 
               //onTap: (_, __) => PopupController().hideAllPopups()
@@ -342,7 +340,7 @@ class DriverMarker extends Marker {
     point: point,
     builder: builder,
     //stop from rotating
-    rotateAlignment: AnchorAlign.top.rotationAlignment,
+    //rotateAlignment: AnchorAlign.top.rotationAlignment,
     anchorPos: AnchorPos.align(AnchorAlign.top),
 
   );
