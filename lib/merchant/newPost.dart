@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../constants.dart';
+import 'package:intl/intl.dart';
 
 class newPost extends StatefulWidget {
   const newPost({Key? key}) : super(key: key);
@@ -22,7 +23,84 @@ class _newPostState extends State<newPost> {
   final _contactNameController = TextEditingController();
   final _contactNumberController = TextEditingController();
   final _pickupTimeController = TextEditingController();
+  final _dropoffTimeController = TextEditingController();
+  DateTime? _pickupDateTime;
+  DateTime? _dropoffDateTime;
   bool needsFridge = false;
+
+  Future<void> _selectPickupDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _pickupDateTime ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null) {
+      _selectPickupTime(context, picked);
+    }
+  }
+
+  Future<void> _selectPickupTime(
+      BuildContext context, DateTime initialTime) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(initialTime),
+    );
+
+    if (picked != null) {
+      final DateTime selectedPickupDateTime = DateTime(
+        initialTime.year,
+        initialTime.month,
+        initialTime.day,
+        picked.hour,
+        picked.minute,
+      );
+
+      setState(() {
+        _pickupDateTime = selectedPickupDateTime.toLocal();
+        _pickupTimeController.text =
+            DateFormat('yyyy-MM-dd HH:mm').format(selectedPickupDateTime);
+      });
+    }
+  }
+
+  Future<void> _selectDropoffDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _dropoffDateTime ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null) {
+      _selectDropoffTime(context, picked);
+    }
+  }
+
+  Future<void> _selectDropoffTime(
+      BuildContext context, DateTime initialTime) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(initialTime),
+    );
+
+    if (picked != null) {
+      final DateTime selectedDropoffDateTime = DateTime(
+        initialTime.year,
+        initialTime.month,
+        initialTime.day,
+        picked.hour,
+        picked.minute,
+      );
+
+      setState(() {
+        _dropoffDateTime = selectedDropoffDateTime.toLocal();
+        _dropoffTimeController.text =
+            DateFormat('yyyy-MM-dd HH:mm').format(selectedDropoffDateTime);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +148,8 @@ class _newPostState extends State<newPost> {
                 TextFormField(
                   controller: _weightController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                      labelText: 'Total Weight in grams (g)'),
+                  decoration:
+                      const InputDecoration(labelText: 'Total weight (kg)'),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a weight';
@@ -86,7 +164,7 @@ class _newPostState extends State<newPost> {
                       labelText: 'Approximate total size (M³)'),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a approximate size ';
+                      return 'Please enter a approximate size';
                     }
                     return null;
                   },
@@ -164,15 +242,46 @@ class _newPostState extends State<newPost> {
                 ),
                 TextFormField(
                   controller: _pickupTimeController,
-                  decoration:
-                      const InputDecoration(labelText: 'Pickup Time (24hr)'),
+                  decoration: InputDecoration(
+                    labelText: 'Enter Pickup Date and Time',
+                    suffixIcon: InkWell(
+                      onTap: () {
+                        _selectPickupDate(context);
+                      },
+                      child: Icon(Icons.calendar_today),
+                    ),
+                  ),
+                  readOnly: true,
+                  onTap: () {
+                    _selectPickupDate(
+                        context); // Show date picker on text field tap as well
+                  },
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a pickup time';
+                      return 'Please enter a date and time';
                     }
-                    //additional validation for time in the correct format for time without time zone as stored in a postgresql database
-                    if (DateTime.parse(value) == null) {
-                      return 'Please enter a valid time';
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _dropoffTimeController,
+                  decoration: InputDecoration(
+                    labelText: 'Enter a delivery date and time',
+                    suffixIcon: InkWell(
+                      onTap: () {
+                        _selectDropoffDate(context);
+                      },
+                      child: Icon(Icons.calendar_today),
+                    ),
+                  ),
+                  readOnly: true,
+                  onTap: () {
+                    _selectDropoffDate(
+                        context); // Show date picker on text field tap as well
+                  },
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a date and time';
                     }
                     return null;
                   },
@@ -184,11 +293,17 @@ class _newPostState extends State<newPost> {
                         final currentUser = await supabase.auth.currentUser;
                         if (currentUser != null) {
                           final userID = currentUser.id;
+                          final wieght =
+                              double.tryParse(_weightController.text)?.toInt();
+                          final formattedPickupTime =
+                              _pickupDateTime?.toIso8601String();
+                          final formattedDeliveryTime =
+                              _dropoffDateTime?.toIso8601String();
                           final response =
                               await supabase.from('advertisments').insert([
                             {
                               'goods_type': _goodsTypeController.text,
-                              'weight': _weightController.text,
+                              'weight': wieght,
                               'size': _sizeController.text,
                               'pickup_address': _addressPickupController.text,
                               'dropoff_address':
@@ -199,7 +314,8 @@ class _newPostState extends State<newPost> {
                               'job_status': 'POSTED',
                               'contact_name': _contactNameController.text,
                               'contact_number': _contactNumberController.text,
-                              'pickup_time': _pickupTimeController.text,
+                              'pickup_time': formattedPickupTime,
+                              'delivery_time': formattedDeliveryTime,
                             }
                           ]);
                         }
