@@ -559,6 +559,7 @@ class _activeDriverState extends State<activeDriver> {
                                         content: Column(mainAxisSize: MainAxisSize.min,
                                             children: <Widget>[
                                           const Text('Confirm and enter details below'),
+                                          SizedBox(height: 10,),
                                           Row(
                                             children: <Widget>[
                                               Expanded(
@@ -573,7 +574,7 @@ class _activeDriverState extends State<activeDriver> {
                                                   child: Align(
                                                       alignment: Alignment.centerLeft,
                                                       child: Container(
-                                                        child :  Text(data[index]['suppliers']['buyer_name'].toString(), style: TextStyle(color: textColor, fontSize: 15)),
+                                                        child :  Text(data[index]['contact_name'].toString(), style: TextStyle(color: textColor, fontSize: 15)),
                                                       )
                                                   )
                                               ),
@@ -619,6 +620,7 @@ class _activeDriverState extends State<activeDriver> {
                                                   ),
                                                 ],
                                               ),
+                                              SizedBox(height: 10),
                                               Text('Signee\'s Name', style: TextStyle(color: textColor, fontSize: 15 ,fontWeight: FontWeight.bold),),
                                               TextField(
                                                 controller: _signeeName,
@@ -634,6 +636,32 @@ class _activeDriverState extends State<activeDriver> {
                                           onPressed: () {
                                             if (_signeeName.text == ""){
                                               print("ERROR");
+                                              Future.delayed(Duration.zero, () =>
+                                                  showDialog<void>(
+                                                    context: context,
+                                                    barrierDismissible: false, // user must tap button!
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: const Text("SIGNEE'S NAME REQUIRED"),
+                                                        content: const SingleChildScrollView(
+                                                          child: ListBody(
+                                                            children: <Widget>[
+                                                              Text('Please enter a name for the person accepting the delivery'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        actions: <Widget>[
+                                                          TextButton(
+                                                            child: const Text('Okay'),
+                                                            onPressed: () {
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  )
+                                              );
                                             }else{
                                               loadingOverlay();
                                               confirmDelivery('${data[index]['job_id']}', _signeeName.text);
