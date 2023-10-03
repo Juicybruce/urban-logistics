@@ -228,7 +228,18 @@ class _mapDriverState extends State<mapDriver> {
       final address = response.data![i]['pickup_address'].toString();
       print(address);
       //get the latlng from the address
-      final latlng = await geo.locationFromAddress(address);
+
+
+      final latlng = await geo.locationFromAddress(address) //as List<geo.Location>;
+          .catchError((dynamic e) async {
+            //set the latlng to 0,0 if the address is not found Location({required double latitude, required double longitude, required DateTime timestamp})
+            return [geo.Location(latitude: 0, longitude: 0, timestamp: DateTime.now())];
+
+
+        print(e);
+      });
+
+
       //add the latlng to the list
       if (latlng.isNotEmpty){
         addresses.add(LatLng(latlng[0].latitude, latlng[0].longitude));
@@ -236,7 +247,7 @@ class _mapDriverState extends State<mapDriver> {
       }
       else {
         print("no latlng");
-        //addresses.add(LatLng(0,0));
+        //addresses.add(LatLng(latlng[0].latitude, latlng[0].longitude));
 
       }
       //addresses.add(LatLng(latlng[0].latitude, latlng[0].longitude));
