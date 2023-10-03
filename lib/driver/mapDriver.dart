@@ -139,9 +139,8 @@ class _mapDriverState extends State<mapDriver> {
       floatingActionButton: FloatingActionButton(
         heroTag: "btn1",
         onPressed: () async {
-          //final LocationData value = await Location().getLocation();
-          //mapController.move(LatLng(value.latitude!, value.longitude!), 13);
-          updateLocation();
+          final LocationData value = await Location().getLocation();
+          mapController.move(LatLng(value.latitude!, value.longitude!), 13);
         },
         child: const Icon(Icons.location_on),
       ),

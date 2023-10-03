@@ -148,13 +148,8 @@ class _activeMerchantState extends State<activeMerchant> {
   }
 
   String convertToDateTime(DateTime DT){
-    if(DT != null) {
-      DT = DT.toLocal();
-      String temp = DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
-      return temp;
-    } else {
-      return "";
-    }
+    DT = DT.toLocal();
+    return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
   }
 
   @override
@@ -224,8 +219,11 @@ class _activeMerchantState extends State<activeMerchant> {
     print(data[index]['job_status']);
     Color? cardColor;
     Color? textColor;
-    if (data[index]['job_status']  == 'POSTED'){
+    if (data[index]['job_status']  == 'POSTED' || data[index]['job_status']  == 'MERCHANT_START'){
       cardColor = ColorConstants.postedColor;
+      textColor = Colors.white;
+    }else if (data[index]['job_status']  == 'DRIVER_START' || data[index]['job_status']  == 'DELIVERED'){
+      cardColor = ColorConstants.responseRequired;
       textColor = Colors.white;
     }else{
       cardColor = ColorConstants.inProgressColor;
@@ -275,12 +273,14 @@ class _activeMerchantState extends State<activeMerchant> {
                         Text('POSTED', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
                       ]else if (data[index]['job_status'] == 'ACCEPTED') ...[
                         Text('ACCEPTED', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
-                      ]else if (data[index]['job_status'] == 'DRIVER_START' || data[index]['job_status'] == 'MERCHANT_START') ...[
-                        Text('PENDING\nRESPONSE', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
+                      ]else if (data[index]['job_status'] == 'MERCHANT_START') ...[
+                        Text('AWAITING\nRESPONSE', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
+                      ]else if (data[index]['job_status'] == 'DRIVER_START') ...[
+                        Text('RESPONSE\nREQUIRED', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
                       ]else if (data[index]['job_status'] == 'EN_ROUTE') ...[
                         Text('IN\nPROGRESS', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
                       ]else if (data[index]['job_status'] == 'DELIVERED') ...[
-                        Text('DELIVERED', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
+                        Text('CONFIRMATION\nREQUIRED', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
                       ]
                     ],
                   ),
@@ -314,9 +314,9 @@ class _activeMerchantState extends State<activeMerchant> {
         ],
       );
     } else {
-      Color? textColor = data[index]['job_status']  == 'POSTED' ? Colors.white : Colors.black;
+      Color? textColor = data[index]['job_status']  == 'ACCEPTED' || data[index]['job_status']  == 'EN_ROUTE' ? Colors.black : Colors.white;
       String cooling = "";
-      data[index]['cooling_required'] == 'TRUE' ? cooling = "Yes" : cooling = "No";
+      cooling = data[index]['cooling_required'] == true ?  "Yes" :  "No";
 
       return Column(
         //crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,16 +324,18 @@ class _activeMerchantState extends State<activeMerchant> {
           //SizedBox(height: 10,),
           Divider( thickness: 1, color: textColor,),
           buildExpandedRow(data, index, 'Pickup Address', data[index]['pickup_address'].toString(), textColor),
+          SizedBox(height: 5,),
           buildExpandedRow(data, index, 'Delivery Address', data[index]['dropoff_address'].toString(), textColor),
-          buildExpandedRow(data, index, 'Distance', data[index]['distance'].toString(), textColor),
+          buildExpandedRow(data, index, 'Distance', "${data[index]['distance']} Km", textColor),
           buildExpandedRow(data, index, 'Collection Time', convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textColor),
+          SizedBox(height: 5,),
           buildExpandedRow(data, index, 'Delivery Time', convertToDateTime(DateTime.parse(data[index]['delivery_time'].toString())), textColor),
           SizedBox(height: 10,),
           buildExpandedRow(data, index, 'Goods', data[index]['goods_type'].toString(), textColor),
-          buildExpandedRow(data, index, 'Quantity', data[index]['quantity'].toString(), textColor),
-          buildExpandedRow(data, index, 'Total Weight', data[index]['weight'].toString(), textColor),
-          buildExpandedRow(data, index, 'Size', data[index]['size'].toString(), textColor),
-          buildExpandedRow(data, index, 'Cooling Required', data[index]['${cooling}'].toString(), textColor),
+          buildExpandedRow(data, index, 'Quantity', "${data[index]['quantity']} Unit(s)", textColor),
+          buildExpandedRow(data, index, 'Total Weight', "${data[index]['weight']} g", textColor),
+          buildExpandedRow(data, index, 'Size', "${data[index]['size']} M³", textColor),
+          buildExpandedRow(data, index, 'Cooling Required', cooling, textColor),
           SizedBox(height: 10,),
           buildExpandedRow(data, index, 'Buyer Name', data[index]['contact_name'].toString(), textColor),
           buildExpandedRow(data, index, 'Buyer Contact Number', data[index]['contact_number'].toString(), textColor),
@@ -572,9 +574,9 @@ class _activeMerchantState extends State<activeMerchant> {
                           content: Column(mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                             const Text("The Driver has delivered the goods.\nView the proof of delivery and confirm it has been delivered."),
-                              SizedBox(height: 10,),
-                              Text('Signee\'s Name', style: TextStyle(color: textColor, fontSize: 15 ,fontWeight: FontWeight.bold),),
-                              Text(data[index]['signee_name'].toString(), style: TextStyle(color: textColor, fontSize: 15 ),),
+                              const SizedBox(height: 10,),
+                              const Text('Signee\'s Name', style: TextStyle(fontSize: 15 ,fontWeight: FontWeight.bold),),
+                              Text(data[index]['signee_name'].toString(), style: TextStyle(fontSize: 15 ),),
                           ]),
                           actions: <Widget>[
                             ElevatedButton(

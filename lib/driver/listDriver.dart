@@ -138,13 +138,8 @@ class _listDriverState extends State<listDriver> {
   }
 
   String convertToDateTime(DateTime DT){
-    if(DT != null) {
-      DT = DT.toLocal();
-      String temp = DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
-      return temp;
-    } else {
-      return "";
-    }
+    DT = DT.toLocal();
+    return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
   }
 
   @override
@@ -219,7 +214,7 @@ class _listDriverState extends State<listDriver> {
     //String subtitleText = "NOT EXPANDED";
     print(data[index]['job_status']);
     Color? cardColor = ColorConstants.driverListColor;
-
+    Color? textColor = Colors.white;
     return Card(
       child: ListTile(
         title: Padding(
@@ -234,8 +229,10 @@ class _listDriverState extends State<listDriver> {
                   fit: BoxFit.fitWidth,
                   child: Column(
                     children : [
-                      Text(convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textAlign: TextAlign.start, style: TextStyle( fontSize: 16, fontWeight: FontWeight.bold),),
-                    ],
+                      if (data[index]['pickup_time'] != null)...[
+                      Text(convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textAlign: TextAlign.start, style: TextStyle( fontSize: 16, fontWeight: FontWeight.bold, color: textColor),),
+      ]
+      ],
                   ),
                 ),
               ),
@@ -243,8 +240,8 @@ class _listDriverState extends State<listDriver> {
                 flex: 5,
                 child: Column(
                   children : [
-                    Text('${data[index]['goods_type']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 20 ,fontWeight: FontWeight.bold),),
-                    Text('${data[index]['pickup_address']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 16 ),),
+                    Text('${data[index]['goods_type']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 20 ,fontWeight: FontWeight.bold, color: textColor),),
+                    Text('${data[index]['pickup_address']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 16 , color: textColor),),
                   ],
                 ),
               ),
@@ -254,7 +251,7 @@ class _listDriverState extends State<listDriver> {
                   fit: BoxFit.fitWidth,
                   child: Column(
                     children : [
-                      Text('${data[index]['job_status']}', textAlign: TextAlign.end, style: TextStyle( fontSize: 16 ,fontWeight: FontWeight.bold),),
+                      Text('${data[index]['job_status']}', textAlign: TextAlign.end, style: TextStyle( fontSize: 16 ,fontWeight: FontWeight.bold, color: textColor),),
                     ],
                   ),
                 ),
@@ -287,29 +284,35 @@ class _listDriverState extends State<listDriver> {
       );
     } else {
       String cooling = "";
-      data[index]['cooling_required'] == 'TRUE' ? cooling = "Yes" : cooling = "No";
-      Color? textColor = data[index]['job_status']  == 'COMPLETE' ? Colors.black : Colors.black;
-
+      cooling = data[index]['cooling_required'] == true ? "Yes" : "No";
+      //Color? textColor = data[index]['job_status']  == 'COMPLETE' ? Colors.black : Colors.black;
+      Color? textColor = Colors.white;
       return Column(
         //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           //SizedBox(height: 10,),
-          Divider( thickness: 1, color: Colors.black,),
+          Divider( thickness: 1, color: textColor,),
           buildExpandedRow(data, index, 'Merchant Name', '${data[index]['suppliers']['first_name']} ${data[index]['suppliers']['last_name']}', textColor),
           buildExpandedRow(data, index, 'Business Name', data[index]['suppliers']['business_name'].toString(), textColor),
           buildExpandedRow(data, index, 'Merchant Contact Number', data[index]['suppliers']['contact_phone'].toString(), textColor),
           SizedBox(height: 10,),
           buildExpandedRow(data, index, 'Pickup Address', data[index]['pickup_address'].toString(), textColor),
+          SizedBox(height: 5,),
           buildExpandedRow(data, index, 'Delivery Address', data[index]['dropoff_address'].toString(), textColor),
-          buildExpandedRow(data, index, 'Distance', data[index]['distance'].toString(), textColor),
+          buildExpandedRow(data, index, 'Distance', "${data[index]['distance']} Km", textColor),
+    if (data[index]['pickup_time'] != null)...[
           buildExpandedRow(data, index, 'Collection Time', convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textColor),
+    ],
+          SizedBox(height: 5,),
+    if (data[index]['delivery_time'] != null)...[
           buildExpandedRow(data, index, 'Delivery Time', convertToDateTime(DateTime.parse(data[index]['delivery_time'].toString())), textColor),
+          ],
           SizedBox(height: 10,),
           buildExpandedRow(data, index, 'Goods', data[index]['goods_type'].toString(), textColor),
-          buildExpandedRow(data, index, 'Quantity', data[index]['quantity'].toString(), textColor),
-          buildExpandedRow(data, index, 'Total Weight', data[index]['weight'].toString(), textColor),
-          buildExpandedRow(data, index, 'Size', data[index]['size'].toString(), textColor),
-          buildExpandedRow(data, index, 'Cooling Required', data[index]['${cooling}'].toString(), textColor),
+          buildExpandedRow(data, index, 'Quantity', "${data[index]['quantity']} Unit(s)", textColor),
+          buildExpandedRow(data, index, 'Total Weight', "${data[index]['weight']} g", textColor),
+          buildExpandedRow(data, index, 'Size', "${data[index]['size']} M³", textColor),
+          buildExpandedRow(data, index, 'Cooling Required', cooling, textColor),
           SizedBox(height: 10,),
           buildExpandedRow(data, index, 'Buyer Name', data[index]['contact_name'].toString(), textColor),
           buildExpandedRow(data, index, 'Buyer Contact Number', data[index]['contact_number'].toString(), textColor),

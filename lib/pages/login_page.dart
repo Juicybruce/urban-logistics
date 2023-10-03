@@ -71,6 +71,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    const String iconPath = 'assets/truck.svg';
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),
@@ -78,6 +79,22 @@ class _LoginPageState extends State<LoginPage> {
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
         children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                iconPath,
+                colorFilter:
+                ColorFilter.mode(Colors.pinkAccent, BlendMode.srcIn),
+                semanticsLabel: 'Truck Icon',
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Urban Logistics',
+                style: TextStyle(fontSize: 40),
+              ),
+            ],
+          ),
           const SizedBox(height: 18),
           TextFormField(
             controller: _emailController,

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'constants.dart';
 import 'driver/activeDriver.dart';
 import 'driver/changeVehicle.dart';
@@ -12,7 +15,6 @@ import 'merchant/historyMerchant.dart';
 import 'merchant/listMerchant.dart';
 import 'merchant/mapMerchant.dart';
 import 'merchant/newPost.dart';
-import 'dart:async';
 
 
 class navBar extends StatefulWidget {
@@ -45,55 +47,53 @@ class _navBarState extends State<navBar> {
     getUserDetails();
   }
 
-void setSubscribe(){
-  if (isMerchant) {
-    supabase.channel('public:advertisments').on(
-      RealtimeListenTypes.postgresChanges,
-      ChannelFilter(event: 'UPDATE',
-          schema: 'public',
-          table: 'advertisments',
-          filter: 'supplier_id=eq.$userID'),
-          (payload, [ref]) {
-        //print('Change received: ${payload.toString()}');
-        doNotificationStuff(payload['new']['job_id']);
-      },
-    ).subscribe();
-    //print ("merch");
-  } else {
-    supabase.channel('public:advertisments').on(
-      RealtimeListenTypes.postgresChanges,
-      ChannelFilter(event: 'UPDATE',
-          schema: 'public',
-          table: 'advertisments',
-          filter: 'driver_id=eq.$userID'),
-          (payload, [ref]) {
-        //print('Change received: ${payload.toString()}');
-        doNotificationStuff(payload['new']['job_id']);
-      },
-    ).subscribe();
-    //print ("not merch");
-  }
-}
-
-  void doNotificationStuff(jobID) async {
-  if(isMerchant){
-    var response = await supabase
-        .from('advertisments')
-        .select('job_id, drivers:driver_id(driver_id, first_name, last_name, contactnumber)')
-        .eq('job_id', jobID);
-    String temp = 'Your Advertisment has been progressed via ${response[0]['drivers']['first_name']} ${response[0]['drivers']['last_name']}';
-    print(temp);
-  }else{
-    var response = await supabase
-        .from('advertisments')
-        .select('*, suppliers:supplier_id(first_name, last_name, business_name, contact_phone)')
-        .eq('job_id', jobID);
-    String temp = 'Your current job has been updated by ${response[0]['suppliers']['first_name']} ${response[0]['suppliers']['last_name']}';
-    print(temp);
-  }
-
-
-  }
+// void setSubscribe(){
+//   if (isMerchant) {
+//     supabase.channel('public:advertisments').on(
+//       RealtimeListenTypes.postgresChanges,
+//       ChannelFilter(event: 'UPDATE',
+//           schema: 'public',
+//           table: 'advertisments',
+//           filter: 'supplier_id=eq.$userID'),
+//           (payload, [ref]) {
+//         //print('Change received: ${payload.toString()}');
+//         doNotificationStuff(payload['new']['job_id']);
+//       },
+//     ).subscribe();
+//     //print ("merch");
+//   } else {
+//     supabase.channel('public:advertisments').on(
+//       RealtimeListenTypes.postgresChanges,
+//       ChannelFilter(event: 'UPDATE',
+//           schema: 'public',
+//           table: 'advertisments',
+//           filter: 'driver_id=eq.$userID'),
+//           (payload, [ref]) {
+//         //print('Change received: ${payload.toString()}');
+//         doNotificationStuff(payload['new']['job_id']);
+//       },
+//     ).subscribe();
+//     //print ("not merch");
+//   }
+// }
+//
+//   void doNotificationStuff(jobID) async {
+//   if(isMerchant){
+//     var response = await supabase
+//         .from('advertisments')
+//         .select('job_id, drivers:driver_id(driver_id, first_name, last_name, contactnumber)')
+//         .eq('job_id', jobID);
+//     String temp = 'Your Advertisment has been progressed via ${response[0]['drivers']['first_name']} ${response[0]['drivers']['last_name']}';
+//     print(temp);
+//   }else{
+//     var response = await supabase
+//         .from('advertisments')
+//         .select('*, suppliers:supplier_id(first_name, last_name, business_name, contact_phone)')
+//         .eq('job_id', jobID);
+//     String temp = 'Your current job has been updated by ${response[0]['suppliers']['first_name']} ${response[0]['suppliers']['last_name']}';
+//     print(temp);
+//   }
+//   }
 
   FutureOr popChangeVehicle(dynamic value){
     setState(() {
@@ -148,7 +148,7 @@ void setSubscribe(){
   uname = "$fname $lname";
   //await Future.delayed(const Duration(seconds: 3));
   setState(() {
-    setSubscribe();
+    //setSubscribe();
     isLoading = false;
   });
   //return "$fname $lname";
@@ -189,6 +189,7 @@ void setSubscribe(){
     }
 
     return Scaffold(
+      extendBody: true,
       body: PageStorage(
         child: currentScreen,
         bucket: bucket,
