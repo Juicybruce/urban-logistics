@@ -400,10 +400,11 @@ class JobMarkerPopup extends StatelessWidget {
                 flex: 5,
                 child: Column(
                   children : [
-                    Text('${jobs['goods_type']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 20 ,fontWeight: FontWeight.normal, color: textColor),),
+                    Text('${jobs['goods_type']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 20 ,fontWeight: FontWeight.bold, color: textColor),),
                     Text('${jobs['pickup_address']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 15 , color: textColor),),
                     if (jobs['pickup_time'] != null)...[
-                      Text(convertToDateTime(DateTime.parse(jobs['pickup_time'].toString())), textAlign: TextAlign.center, style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.bold, color: textColor),),
+
+                      Text("time: " + convertToDateTime(DateTime.parse(jobs['pickup_time'].toString())), textAlign: TextAlign.center, style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.normal, color: textColor),),
                       //using ${jobs['pickup_time']}
                       //Text('${jobs['pickup_time']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 16 , color: textColor),),
                     ]
