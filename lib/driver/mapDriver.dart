@@ -283,7 +283,6 @@ class _mapDriverState extends State<mapDriver> {
           geo.Location(latitude: 0, longitude: 0, timestamp: DateTime.now())
         ];
 
-        print(e);
       });
 
       //add the latlng to the list
@@ -309,7 +308,6 @@ class _mapDriverState extends State<mapDriver> {
 
         .execute();
     //list if latlngs
-    List<LatLng> truckLocations = [];
     //list if driver objects
     List<dynamic> jobs = [];
     if (response.data == null) {
@@ -381,8 +379,6 @@ class JobMarkerPopup extends StatelessWidget {
 //get the truck's id
     final String truckId = jobs['supplier_id'].toString();
     //get the truck's details from the database
-    final response = supabase.from('suppliers').select().eq('supplier_id', truckId).execute();
-    final pickupDateTime = convertToDateTime(DateTime.parse(jobs['pickup_time'].toString()));
     //display the truck's details
     var textColor = Colors.black;
     return Container(
