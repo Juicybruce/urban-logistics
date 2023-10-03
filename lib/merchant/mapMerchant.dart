@@ -188,54 +188,54 @@ class _mapMerchantState extends State<mapMerchant> {
               ),
               PopupMarkerLayer(
                 options: PopupMarkerLayerOptions (
-                  markers: [
-                    //display the user's location on the map
-                    Marker(
-                      width: 80.0,
-                      height: 80.0,
-                      point: _myLocation,
-                      builder: (ctx) => const Icon(
-                        Icons.store_rounded,
-                        color: Colors.pinkAccent,
-                        size: 30,
-                      ),
-                      //no rotation
-                      rotate: false,
-                    ),
-                    //display the addresses on the map
-                    for (var i = 0; i < _truckLocations2.length; i++)
-                    //get latlng from the driver object
-                      DriverMarker(
-                        _truckLocations2[i],
+                    markers: [
+                      //display the user's location on the map
+                      Marker(
                         width: 80.0,
                         height: 80.0,
-                        point: LatLng(_truckLocations2[i]['latitude'] as double, _truckLocations2[i]['longitude']as double),
+                        point: _myLocation,
                         builder: (ctx) => const Icon(
-                          Icons.local_shipping_rounded,
-                          color: Colors.purple,
-                          size: 25,
-
-                          //on tap display the truck's detail
+                          Icons.store_rounded,
+                          color: Colors.pinkAccent,
+                          size: 30,
                         ),
+                        //no rotation
+                        rotate: false,
                       ),
+                      //display the addresses on the map
+                      for (var i = 0; i < _truckLocations2.length; i++)
+                      //get latlng from the driver object
+                        DriverMarker(
+                          _truckLocations2[i],
+                          width: 80.0,
+                          height: 80.0,
+                          point: LatLng(_truckLocations2[i]['latitude'] as double, _truckLocations2[i]['longitude']as double),
+                          builder: (ctx) => const Icon(
+                            Icons.local_shipping_rounded,
+                            color: Colors.purple,
+                            size: 25,
 
-                  ],
+                            //on tap display the truck's detail
+                          ),
+                        ),
 
-                  popupController: PopupController(),
+                    ],
+
+                    popupController: PopupController(),
                     popupDisplayOptions: PopupDisplayOptions (
 
 
 
-                    builder: (_, Marker marker){
-                    if (marker is DriverMarker){
-                      return DriverMarkerPopup(driver: marker.driver);
-                    }
-                    return const Card(child: Text('Not a A truck Marker'));
-                    }
+                        builder: (_, Marker marker){
+                          if (marker is DriverMarker){
+                            return DriverMarkerPopup(driver: marker.driver);
+                          }
+                          return const Card(child: Text('Not a A truck Marker'));
+                        }
                     )
                 ),
               ),
-             //CurrentLocationLayer(),
+              //CurrentLocationLayer(),
             ],
           ),
         ],
@@ -332,7 +332,7 @@ class _mapMerchantState extends State<mapMerchant> {
     //print(drivers);
     return drivers;
   }
-  //update the user's location on the map`
+//update the user's location on the map`
 }
 class DriverMarker extends Marker {
   DriverMarker(this.driver, {
@@ -373,11 +373,11 @@ class DriverMarkerPopup extends StatelessWidget {
           child:
           Column(
             children: [
-          Text(
-          '${driver['first_name']} ${driver['last_name']}',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+              Text(
+                '${driver['first_name']} ${driver['last_name']}',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
               Text(
                 //company name
                 '${driver['company_name']}',
@@ -394,31 +394,31 @@ class DriverMarkerPopup extends StatelessWidget {
               ),
               //truck details
 
-            FutureBuilder(
-              future: response,
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if (snapshot.hasData) {
-                  return Container(
-                    child: Column(
-                      children: [
-                        //Text("licenseplate:${snapshot.data.data![0]['license_plate']}\n capacity:${snapshot.data.data![0]['capacity']}\n type:${snapshot.data.data![0]['truck_type']}");\
-                        Text('truck details',
-                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500
+              FutureBuilder(
+                future: response,
+                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if (snapshot.hasData) {
+                    return Container(
+                      child: Column(
+                        children: [
+                          //Text("licenseplate:${snapshot.data.data![0]['license_plate']}\n capacity:${snapshot.data.data![0]['capacity']}\n type:${snapshot.data.data![0]['truck_type']}");\
+                          Text('truck details',
+                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500
+                            ),
                           ),
-                        ),
-                        Text("licenseplate: ${snapshot.data.data![0]['license_plate']}",
-                        ),
-                        Text("vehicle type: ${snapshot.data
-                            .data![0]['truck_type']}"),
-                        Text("capacity: ${snapshot.data.data![0]['space_capacity']}m³"),
+                          Text("licenseplate: ${snapshot.data.data![0]['license_plate']}",
+                          ),
+                          Text("vehicle type: ${snapshot.data
+                              .data![0]['truck_type']}"),
+                          Text("capacity: ${snapshot.data.data![0]['space_capacity']}m³"),
 
-                      ],
-                    ),
-                  );
-                }
-                return const CircularProgressIndicator();
-              },
-            ),
+                        ],
+                      ),
+                    );
+                  }
+                  return const CircularProgressIndicator();
+                },
+              ),
             ],
           ),
         )
