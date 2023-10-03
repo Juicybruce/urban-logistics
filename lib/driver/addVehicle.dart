@@ -26,7 +26,7 @@ class _addVehicleState extends State<addVehicle> {
   final String? uid = supabase.auth.currentUser!.id;
 
 
-@override
+  @override
   void initState() {
 
     super.initState();
@@ -40,7 +40,7 @@ class _addVehicleState extends State<addVehicle> {
     //uid to int
 
     //a dialogue box with a form to add a truck that has a license plate, truck type, truck capacity, truck weight, and cooling drop down
-   // final  uid = _client;
+    // final  uid = _client;
     // uid to int PostgrestFilterBuilder<dynamic>
 
 
@@ -51,82 +51,85 @@ class _addVehicleState extends State<addVehicle> {
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          
-          children: [
-            TextFormField(
-              controller: _licensePlateController,
-              decoration: const InputDecoration(labelText: 'License Plate'),
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a license plate';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _insuranceNumberController,
-              decoration: const InputDecoration(labelText: 'Insurance Number'),
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a insurance number';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _truckTypeController,
-              decoration: const InputDecoration(labelText: 'Truck Type'),
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a truck type';
-                }
-                return null;
-              },
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
 
-            TextFormField(
-              controller: _truckCapacityController,
-              decoration: const InputDecoration(labelText: 'Truck Capacity (L)'),
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a truck capacity';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _truckWeightController,
-              decoration: const InputDecoration(labelText: 'Truck Weight (KG)'),
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a truck weight';
-                }
-                return null;
-              },
-            ),
-            DropdownButton(
-              value: _isCooling,
-              onChanged: (bool? value) {
-                setState(() {
-                  _isCooling = value!;
-                });
-              },
-              items: const [
-                DropdownMenuItem(
-                  value: false,
-                  child: Text('No Cooling'),
-                ),
-                DropdownMenuItem(
-                  value: true,
-                  child: Text('Cooling'),
-                ),
-              ],
-            ),
-          ],
+            children: [
+              TextFormField(
+                controller: _licensePlateController,
+                decoration: const InputDecoration(labelText: 'License Plate'),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a license plate';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _insuranceNumberController,
+                decoration: const InputDecoration(labelText: 'Insurance Number'),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a insurance number';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _truckTypeController,
+                decoration: const InputDecoration(labelText: 'Truck Type'),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a truck type';
+                  }
+                  return null;
+                },
+              ),
+
+              TextFormField(
+                controller: _truckCapacityController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Truck Capacity (m³)'),
+                validator: (String? value) {
+                  // ensure the user enters a number
+                  if (value == null || value.isEmpty || double.parse(value) <= 0) {
+                    return 'Please enter a truck capacity';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _truckWeightController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Truck Weight (KG)'),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty || double.parse(value) <= 0) {
+                    return 'Please enter a truck weight';
+                  }
+                  return null;
+                },
+              ),
+              DropdownButton(
+                value: _isCooling,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _isCooling = value!;
+                  });
+                },
+                items: const [
+                  DropdownMenuItem(
+                    value: false,
+                    child: Text('No Cooling'),
+                  ),
+                  DropdownMenuItem(
+                    value: true,
+                    child: Text('Cooling'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
       ),
       actions: [
         TextButton(
