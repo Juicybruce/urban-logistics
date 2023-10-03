@@ -88,9 +88,11 @@ class _addVehicleState extends State<addVehicle> {
 
             TextFormField(
               controller: _truckCapacityController,
-              decoration: const InputDecoration(labelText: 'Truck Capacity (L)'),
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Truck Capacity (m³)'),
               validator: (String? value) {
-                if (value == null || value.isEmpty) {
+                // ensure the user enters a number
+                if (value == null || value.isEmpty || double.parse(value) <= 0) {
                   return 'Please enter a truck capacity';
                 }
                 return null;
@@ -98,9 +100,10 @@ class _addVehicleState extends State<addVehicle> {
             ),
             TextFormField(
               controller: _truckWeightController,
+              keyboardType: TextInputType.number,
               decoration: const InputDecoration(labelText: 'Truck Weight (KG)'),
               validator: (String? value) {
-                if (value == null || value.isEmpty) {
+                if (value == null || value.isEmpty || double.parse(value) <= 0) {
                   return 'Please enter a truck weight';
                 }
                 return null;

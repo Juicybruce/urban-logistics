@@ -410,7 +410,7 @@ class DriverMarkerPopup extends StatelessWidget {
                         ),
                         Text("vehicle type: ${snapshot.data
                             .data![0]['truck_type']}"),
-                        Text("capacity: ${snapshot.data.data![0]['capacity']}"),
+                        Text("capacity: ${snapshot.data.data![0]['space_capacity']}m³"),
 
                       ],
                     ),
