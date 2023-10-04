@@ -52,4 +52,7 @@ class ColorConstants{
  static final Color inProgressColor = Colors.amber.shade300;
  static final Color postedColor = Colors.blue.shade600;
  static final Color responseRequired = Colors.red.shade700;
+ static final Color postedPin = Colors.blue.shade800;
+ static final Color AcceptedPin = Colors.deepOrange;
+ static final Color inProgressPin = Colors.purple;
 }
