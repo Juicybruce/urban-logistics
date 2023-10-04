@@ -196,21 +196,53 @@ class _mapDriverState extends State<mapDriver> {
                       //display the user's location on the map
                       //display the addresses on the map
                       if (_addresses.isNotEmpty)
-                      for (var i = 0; i < _jobLocations2.length; i++)
-                      //get latlng from the driver object
-                        JobMarker(
-                          _jobLocations2[i],
-                          width: 80.0,
-                          height: 80.0,
-                          point: _addresses[i],
-                          builder: (ctx) => const Icon(
-                            Icons.location_on,
-                            color: Colors.redAccent,
-                            size: 25,
+                        for (var i = 0; i < _jobLocations2.length; i++)
+                        //get latlng from the driver object
 
-                            //on tap display the truck's detail
-                          ),
-                        ),
+                          if(_jobLocations2[i]['job_status'].toString() == 'POSTED') ...[
+                            JobMarker(
+                              _jobLocations2[i],
+                              width: 80.0,
+                              height: 80.0,
+                              point: _addresses[i],
+                              builder: (ctx) => Icon(
+                                Icons.location_on,
+                                color:  ColorConstants.postedPin,
+                                size: 35,
+
+                                //on tap display the truck's detail
+                              ),
+                            ),
+                          ] else if (_jobLocations2[i]['job_status'].toString() == 'ACCEPTED') ...[
+                            JobMarker(
+                              _jobLocations2[i],
+                              width: 80.0,
+                              height: 80.0,
+                              point: _addresses[i],
+                              builder: (ctx) =>  Icon(
+                                Icons.location_on,
+                                color: ColorConstants.AcceptedPin,
+                                size: 35,
+
+                                //on tap display the truck's detail
+                              ),
+                            ),
+                          ]else...[
+                            JobMarker(
+                              _jobLocations2[i],
+                              width: 80.0,
+                              height: 80.0,
+                              point: _addresses[i],
+                              builder: (ctx) =>  Icon(
+                                Icons.location_on,
+                                color: ColorConstants.inProgressPin,
+                                size: 35,
+
+                                //on tap display the truck's detail
+                              ),
+                            ),
+                          ],
+
                     ],
                     popupController: PopupController(),
                     popupDisplayOptions:
@@ -256,8 +288,8 @@ class _mapDriverState extends State<mapDriver> {
     final response = await supabase
         .from('advertisments')
         .select()
-        .eq('driver_id', user!.id)
-        .eq('job_status', 'EN_ROUTE')
+        .or('driver_id.eq.${user!.id}, job_status.eq.POSTED')
+        .neq('job_status', 'COMPLETE')
         .execute();
     //list if latlngs corresponding to the addresses
     List<LatLng> addresses = [];
@@ -271,10 +303,14 @@ class _mapDriverState extends State<mapDriver> {
     //get the list of addresses from the accepted jobs
     for (var i = 0; i < length; i++) {
       //get the address from the database
-      final address = response.data![i]['pickup_address'].toString();
+      String address;
+      if(response.data![i]['job_status'].toString() == "POSTED" || response.data![i]['job_status'].toString() == "ACCEPTED") {
+        address = response.data![i]['pickup_address'].toString();
+      } else {
+        address = response.data![i]['dropoff_address'].toString();
+      }
       print(address);
       //get the latlng from the address
-
       final latlng = await geo
           .locationFromAddress(address) //as List<geo.Location>;
           .catchError((dynamic e) async {
@@ -303,8 +339,8 @@ class _mapDriverState extends State<mapDriver> {
     final response = await supabase
         .from('advertisments')
         .select()
-        .eq('driver_id', user!.id)
-        .eq('job_status', 'EN_ROUTE')
+        .or('driver_id.eq.${user!.id}, job_status.eq.POSTED')
+        .neq('job_status', 'COMPLETE')
 
         .execute();
     //list if latlngs
@@ -382,34 +418,53 @@ class JobMarkerPopup extends StatelessWidget {
     //display the truck's details
     var textColor = Colors.black;
     return Container(
-        width: 300,
-        height: 100,
-        child: Card(
-          //transparent background
-          color: Colors.white.withOpacity(0.7),
-          child: Row(
+      width: 300,
+      height: 140,
+      child: Card(
+        //transparent background
+        color: Colors.white.withOpacity(0.8),
+        shadowColor: Colors.cyanAccent,
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+          //crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
 
-              Flexible(
-                flex: 5,
-                child: Column(
-                  children : [
+            Flexible(
+              flex: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children : [
+                  if (jobs['job_status'].toString() == "POSTED" || jobs['job_status'].toString() == "ACCEPTED") ...[
                     Text('${jobs['goods_type']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 20 ,fontWeight: FontWeight.bold, color: textColor),),
-                    Text('${jobs['pickup_address']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 15 , color: textColor),),
+                    if (jobs['job_status'].toString() == "POSTED") ...[
+                      Text('POSTED', textAlign: TextAlign.center, style: TextStyle( fontSize: 12 ,fontWeight: FontWeight.bold, color: textColor),),
+                    ]else ...[
+                      Text('ACCEPTED', textAlign: TextAlign.center, style: TextStyle( fontSize: 12 ,fontWeight: FontWeight.bold, color: textColor),),
+                    ],
+                    Text('Pickup Address: ${jobs['pickup_address']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 15 , color: textColor),),
                     if (jobs['pickup_time'] != null)...[
 
-                      Text("time: " + convertToDateTime(DateTime.parse(jobs['pickup_time'].toString())), textAlign: TextAlign.center, style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.normal, color: textColor),),
-                      //using ${jobs['pickup_time']}
-                      //Text('${jobs['pickup_time']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 16 , color: textColor),),
-                    ]
-                  ],
-                ),
+                      Text("Pickup Time: ${convertToDateTime(DateTime.parse(jobs['pickup_time'].toString()))}", textAlign: TextAlign.center, style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.normal, color: textColor),),
+                    ],
+                  ]else ...[
+                    Text('${jobs['goods_type']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 20 ,fontWeight: FontWeight.bold, color: textColor),),
+                    Text('IN PROGRESS', textAlign: TextAlign.center, style: TextStyle( fontSize: 12 ,fontWeight: FontWeight.bold, color: textColor),),
+                    Text('Delivery Address:  ${jobs['dropoff_address']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 15 , color: textColor),),
+                    if (jobs['delivery_time'] != null)...[
+
+                      Text("Delivery Time: ${convertToDateTime(DateTime.parse(jobs['delivery_time'].toString()))}", textAlign: TextAlign.center, style: TextStyle( fontSize: 15 ,fontWeight: FontWeight.normal, color: textColor),),
+                    ],
+
+                    //using ${jobs['pickup_time']}
+                    //Text('${jobs['pickup_time']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 16 , color: textColor),),
+                  ]
+                ],
+
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
 
     );
 
