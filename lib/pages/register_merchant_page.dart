@@ -24,6 +24,7 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
   TextEditingController _productTypeController = TextEditingController();
   TextEditingController _businessTypeController = TextEditingController();
 
+
   late final StreamSubscription<AuthState> _authStateSubscription;
 
   @override
@@ -219,7 +220,29 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                     return null;
                   },
                 ),
-                TextFormField(
+                // make this a dropdown
+                DropdownButtonFormField(
+                //'Business to Business', 'Business to Consumer' , 'Consumer to Consumer' , 'Business to Business/Consumer'
+                items: ['Business to Business', 'Business to Consumer' , 'Business to Business/Consumer'].map((String businessType) {
+                  return DropdownMenuItem(
+                      value: businessType,
+                      child: new Text(businessType)
+                  );
+                }).toList(),
+                hint: Text('Business Type'),
+                onChanged: (String? value) {
+                  setState(() {
+                    _businessTypeController.text = value!;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your business type.';
+                  }
+                  return null;
+                },
+                  //old code
+               /* TextFormField(
                   controller: _businessTypeController,
                   decoration: InputDecoration(labelText: 'Business Type'),
                   validator: (value) {
@@ -228,7 +251,10 @@ class _RegisterMerchantState extends State<RegisterMerchant> {
                     }
                     return null;
                   },
+                ),*/
                 ),
+
+
                 TextFormField(
                   controller: _bankAccountNumberController,
                   decoration: InputDecoration(labelText: 'Bank Account Number'),
