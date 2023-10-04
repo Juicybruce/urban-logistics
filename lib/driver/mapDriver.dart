@@ -441,6 +441,7 @@ class JobMarkerPopup extends StatelessWidget {
                     ]else ...[
                       Text('ACCEPTED', textAlign: TextAlign.center, style: TextStyle( fontSize: 12 ,fontWeight: FontWeight.bold, color: textColor),),
                     ],
+                    Divider( thickness: 1, color: Colors.black, endIndent: 10, indent: 10,),
                     Text('Pickup Address: ${jobs['pickup_address']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 15 , color: textColor),),
                     if (jobs['pickup_time'] != null)...[
 
@@ -449,6 +450,7 @@ class JobMarkerPopup extends StatelessWidget {
                   ]else ...[
                     Text('${jobs['goods_type']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 20 ,fontWeight: FontWeight.bold, color: textColor),),
                     Text('IN PROGRESS', textAlign: TextAlign.center, style: TextStyle( fontSize: 12 ,fontWeight: FontWeight.bold, color: textColor),),
+                    Divider( thickness: 1, color: Colors.black, endIndent: 10, indent: 10,),
                     Text('Delivery Address:  ${jobs['dropoff_address']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 15 , color: textColor),),
                     if (jobs['delivery_time'] != null)...[
 
