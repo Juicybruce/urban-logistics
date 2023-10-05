@@ -43,6 +43,21 @@ The Supabase flutter client is a dependency and has been imported in ./lib/main.
 
 See https://supabase.com/docs/reference/dart/start for documentation on how to use this client
 
+# mapbox with flutter_map
+
+to use mapbox with flutter_map, you will need to change the mapbox token and style id to the class AppConstants in ./lib/constants.dart
+mapBoxStyleId is the style id of the mapbox map you want to use (see https://docs.mapbox.com/api/maps/#styles)
+mapBoxToken is the token for the mapbox account you want to use (see https://docs.mapbox.com/help/getting-started/access-tokens/)
+
+see https://pub.dev/packages/flutter_map for documentation on how to use flutter_map
+and https://docs.fleaflet.dev/tile-servers/using-mapbox for documentation on how to use mapbox with flutter_map
+
+class AppConstants {
+static const String mapBoxAccessToken = '**your mapbox token here**'
+static const String mapBoxStyleId = '**your mapbox style id here**';
+static late final myLocation = LatLng(51.5090214, -0.1982948);
+}
+
 ## Getting Started - Flutter official
 
 A few resources to get you started if this is your first Flutter project:
