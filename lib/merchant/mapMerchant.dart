@@ -164,7 +164,7 @@ class _mapMerchantState extends State<mapMerchant> {
             mapController: mapController,
             options: MapOptions(
               //no zooming
-              minZoom: 13,
+              minZoom: 5,
               maxZoom: 20,
               zoom: 13,
               center: _myLocation,
@@ -248,14 +248,21 @@ class _mapMerchantState extends State<mapMerchant> {
   Future<LatLng> GetBisAddress() async {
     //final String address = "1 Main Street, Hobart, Tasmania, Australia";
     //get the address from the database
-    final response = await supabase.from('suppliers').select().eq('supplier_id', user!.id).execute();
-    final address = response.data![0]['business_address'].toString();
-    //get the latlng from the address
-    final latlng = await geo.locationFromAddress(address);
-    //test first latlng
+    try {
+      final response = await supabase.from('suppliers').select().eq('supplier_id', user!.id).execute();
+      final address = response.data![0]['business_address'].toString();
+      //get the latlng from the address
+      final latlng = await geo.locationFromAddress(address);
+      //test first latlng
 
-    print(latlng);
-    return LatLng(latlng[0].latitude, latlng[0].longitude);
+      print(latlng);
+      return LatLng(latlng[0].latitude, latlng[0].longitude);
+    } catch (e) {
+      //set the default location to melbourne
+      return const LatLng(-37.8136, 144.9631);
+    }
+
+
   }
 
   //get list of addresses from acceepted jobs and display them on the map
