@@ -55,7 +55,7 @@ class _activeMerchantState extends State<activeMerchant> {
     //await Future.delayed(const Duration(seconds: 0));
     await supabase
         .from('advertisments')
-        .update({'merchant_archived':  true, 'job_status': 'CANCELLED'})
+        .update({'job_status': 'CANCELLED'})
         .match({'job_id': jobID});
     getHistory();
   }

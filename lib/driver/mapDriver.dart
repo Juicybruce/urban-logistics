@@ -419,7 +419,7 @@ class JobMarkerPopup extends StatelessWidget {
     var textColor = Colors.black;
     return Container(
       width: 300,
-      height: 140,
+      height: 150,
       child: Card(
         //transparent background
         color: Colors.white.withOpacity(0.8),
