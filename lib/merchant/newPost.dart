@@ -149,7 +149,7 @@ class _newPostState extends State<newPost> {
                   controller: _weightController,
                   keyboardType: TextInputType.number,
                   decoration:
-                      const InputDecoration(labelText: 'Total weight (kg)'),
+                      const InputDecoration(labelText: 'Total weight (g)'),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a weight';
