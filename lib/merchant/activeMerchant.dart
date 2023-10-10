@@ -148,7 +148,7 @@ class _activeMerchantState extends State<activeMerchant> {
   }
 
   String convertToDateTime(DateTime DT){
-    DT = DT.toLocal();
+   // DT = DT.toLocal();
     return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
   }
 
