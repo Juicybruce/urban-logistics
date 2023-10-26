@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import '../constants.dart';
 
+//list of completed jobs
 class historyDriver extends StatefulWidget {
   const historyDriver({Key? key}) : super(key: key);
 
@@ -12,26 +13,25 @@ class historyDriver extends StatefulWidget {
 }
 
 class _historyDriverState extends State<historyDriver> {
-  bool isLoading = false;
-  late List<bool> expanded;
-  String? userID;
-  User? user;
-  late List<dynamic>? dbdata;
+  bool isLoading = false; //if loading overlay should is displayed
+  late List<bool> expanded; //list of bools, for displaying expanded information, or not
+  String? userID; //user id
+  User? user; //user details
+  late List<dynamic>? dbdata; //data from the database
 
   void initState() {
     isLoading = true;
     user = supabase.auth.currentUser;
     userID = user?.id;
-
     getHistory();
     super.initState();
   }
 
+  // get job history from database
   Future<void> getHistory() async {
     await Future.delayed(const Duration(seconds: 0));
     var response = await supabase
         .from('advertisments')
-
         .select('*, suppliers:supplier_id(first_name, last_name, business_name, contact_phone)')
         .eq('driver_id', userID)
         .eq('driver_archived', false)
@@ -46,6 +46,7 @@ class _historyDriverState extends State<historyDriver> {
     removeLoadingOverlay();
   }
 
+  //remove an item from history view
   Future<void> removeFromHistory(String jobID) async {
     await supabase
         .from('advertisments')
@@ -56,6 +57,7 @@ class _historyDriverState extends State<historyDriver> {
 
   OverlayEntry? overlay;
 
+  //show loading overlay
   void loadingOverlay(){
     const String iconPath = 'assets/truck.svg';
     overlay = OverlayEntry(
@@ -90,22 +92,25 @@ class _historyDriverState extends State<historyDriver> {
     Overlay.of(context, debugRequiredFor: widget).insert(overlay!);
   }
 
+  //remove loading overlay
   void removeLoadingOverlay() {
     overlay?.remove();
     overlay = null;
   }
 
+  //convert datetime to useable string
   String convertToDateTime(DateTime DT){
-    DT = DT.toLocal();
     return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
   }
 
+  //dispose of the overlay
   @override
   void dispose() {
     removeLoadingOverlay();
     super.dispose();
   }
 
+  //build the loading screen
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -137,7 +142,7 @@ class _historyDriverState extends State<historyDriver> {
           ));
     }
 
-
+//build the history screen
     return Scaffold(
       body: Center(
         child: RefreshIndicator(
@@ -165,8 +170,8 @@ class _historyDriverState extends State<historyDriver> {
 
   }
 
+  //create card item for list
   Card buildCard(int index, List<bool> expanded, dynamic data) {
-    //String subtitleText = "NOT EXPANDED";
     print(data[index]['job_status']);
     Color? cardColor = ColorConstants.completeColor;
     return Card(
@@ -181,8 +186,7 @@ class _historyDriverState extends State<historyDriver> {
                 child: FittedBox(
                   fit: BoxFit.fitWidth,
                   child: Column(
-                    children : [
-                      //Text('${data[index]['pickup_time']}', textAlign: TextAlign.start, style: TextStyle( fontSize: 14 ),),
+                    children : [//show pickup time
                       Text(convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textAlign: TextAlign.start, style: TextStyle( fontSize: 16, fontWeight: FontWeight.bold),),
                     ],
                   ),
@@ -191,7 +195,7 @@ class _historyDriverState extends State<historyDriver> {
               Flexible(
                 flex: 5,
                 child: Column(
-                  children : [
+                  children : [ //show goods and pickup address
                     Text('${data[index]['goods_type']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 20 ,fontWeight: FontWeight.bold),),
                     Text('${data[index]['pickup_address']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 16 ),),
                   ],
@@ -202,7 +206,7 @@ class _historyDriverState extends State<historyDriver> {
                 child: FittedBox(
                   fit: BoxFit.fitWidth,
                   child: Column(
-                    children : [
+                    children : [ //show job status
                       Text('${data[index]['job_status']}', textAlign: TextAlign.end, style: TextStyle( fontSize: 16 ,fontWeight: FontWeight.bold),),
                     ],
                   ),
@@ -217,7 +221,7 @@ class _historyDriverState extends State<historyDriver> {
         ),
         onTap: () {
           print("TAPPED ${index}");
-          setState(() {
+          setState(() { //if list item is expanded or not
             expanded[index] = !expanded[index];
           });
         },
@@ -226,6 +230,7 @@ class _historyDriverState extends State<historyDriver> {
     );
   }
 
+  //create expanded list information
   Column buildSubstring(int index, dynamic data) {
     if (expanded[index]  != true){
       return Column(
@@ -238,7 +243,6 @@ class _historyDriverState extends State<historyDriver> {
       Color? textColor = data[index]['job_status']  == 'COMPLETE' ? Colors.black : Colors.black;
       return Column(
         children: [
-          //SizedBox(height: 10,),
           Divider( thickness: 1, color: Colors.black,),
           buildExpandedRow(data, index, 'Merchant Name', '${data[index]['suppliers']['first_name']} ${data[index]['suppliers']['last_name']}', textColor),
           buildExpandedRow(data, index, 'Business Name', data[index]['suppliers']['business_name'].toString(), textColor),
@@ -269,8 +273,7 @@ class _historyDriverState extends State<historyDriver> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               FittedBox(
-                //width: 100,
-                child: ElevatedButton(
+                child: ElevatedButton( //remove from history button
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                   onPressed: () => { showDialog(
                       context: context,
@@ -284,7 +287,6 @@ class _historyDriverState extends State<historyDriver> {
                                 loadingOverlay();
                                 setState(() {
                                   removeFromHistory('${data[index]['job_id']}');
-                                  // getHistory();
                                 });
                                 print("IVE BEEN REMOVED");
                                 Navigator.of(context).pop();
@@ -307,6 +309,7 @@ class _historyDriverState extends State<historyDriver> {
     }
   }
 
+  //build the details in the expanded list view
   Row buildExpandedRow(data, int index, String leftText, String rightText, Color textColor) {
     return Row(
       //mainAxisAlignment: MainAxisAlignment.,

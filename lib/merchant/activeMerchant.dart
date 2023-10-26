@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../constants.dart';
 import 'package:intl/intl.dart';
 
+//shows a list of currently active jobs for the merchant
 class activeMerchant extends StatefulWidget {
   const activeMerchant({Key? key}) : super(key: key);
 
@@ -12,47 +13,42 @@ class activeMerchant extends StatefulWidget {
 }
 
 class _activeMerchantState extends State<activeMerchant> {
-  bool isLoading = false;
-  late List<bool> expanded;
-  String? userID;
-  User? user;
-  late List<dynamic>? dbdata;
+  bool isLoading = false; //loading screen displayed
+  late List<bool> expanded; //list of bools, for displaying expanded information, or not
+  String? userID; //user  ID
+  User? user; //User data
+  late List<dynamic>? dbdata; //database data
 
   void initState() {
     isLoading = true;
     user = supabase.auth.currentUser;
-    //email = user?.email;
     userID = user?.id;
 
     getHistory();
     super.initState();
   }
 
+  //get relevent data from the database
   Future<void> getHistory() async {
     await Future.delayed(const Duration(seconds: 0));
     var response = await supabase
         .from('advertisments')
-    //.select('*, drivers!leftouter(first_name, last_name, contactnumber)')
         .select('*, drivers:driver_id(driver_id, first_name, last_name, contactnumber)')
-    //.eq('drivers.driver_id', 'driver_id')
         .eq('supplier_id', userID)
         .eq('merchant_archived', false)
         .neq ('job_status', 'COMPLETE')
         .neq ('job_status', 'CANCELLED')
         .order('pickup_time', ascending: false); //TODO: Order by job date or something like
-    //print(response[0]["drivers"]["first_name"]);
     dbdata = response as List<dynamic>;
     expanded = List<bool>.filled(dbdata!.length, false);
-    //print("TEST1  ${dbdata?[0]['job_status']}");
-    //print("TEST1  ${dbdata?[1]}");
     setState(() {
       isLoading = false;
     });
     removeLoadingOverlay();
   }
 
+  //cancel a job
   Future<void> CancelJob(String jobID) async {
-    //await Future.delayed(const Duration(seconds: 0));
     await supabase
         .from('advertisments')
         .update({'job_status': 'CANCELLED'})
@@ -60,8 +56,8 @@ class _activeMerchantState extends State<activeMerchant> {
     getHistory();
   }
 
+  //start a delivery
   Future<void> startDelivery(String jobID) async {
-    //await Future.delayed(const Duration(seconds: 0));
     await supabase
         .from('advertisments')
         .update({'job_status':  'MERCHANT_START'})
@@ -69,8 +65,8 @@ class _activeMerchantState extends State<activeMerchant> {
     getHistory();
   }
 
+  //confirm the delivery has been started
   Future<void> confirmStartDelivery(String jobID) async {
-    //await Future.delayed(const Duration(seconds: 0));
     await supabase
         .from('advertisments')
         .update({'job_status':  'EN_ROUTE'})
@@ -78,8 +74,8 @@ class _activeMerchantState extends State<activeMerchant> {
     getHistory();
   }
 
+  //confirm the delivery has ended
   Future<void> confirmEndDelivery(String jobID) async {
-    //await Future.delayed(const Duration(seconds: 0));
     await supabase
         .from('advertisments')
         .update({'job_status':  'COMPLETE'})
@@ -87,8 +83,8 @@ class _activeMerchantState extends State<activeMerchant> {
     getHistory();
   }
 
+  //get the status of the job
   Future<bool> getJobStatus(String jobID, String jobStatus) async {
-    //await Future.delayed(const Duration(seconds: 0));
     var response = await supabase
         .from('advertisments')
         .select('job_status')
@@ -99,7 +95,7 @@ class _activeMerchantState extends State<activeMerchant> {
   }
 
   OverlayEntry? overlay;
-
+//show the loading overlay
   void loadingOverlay(){
     const String iconPath = 'assets/truck.svg';
     overlay = OverlayEntry(
@@ -110,7 +106,6 @@ class _activeMerchantState extends State<activeMerchant> {
                 padding: const EdgeInsets.all(0),
 
                 child: Container(
-                  //color: Colors.green.withOpacity(0.5),
                     alignment: Alignment.center,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -136,31 +131,32 @@ class _activeMerchantState extends State<activeMerchant> {
     Overlay.of(context, debugRequiredFor: widget).insert(overlay!);
   }
 
+  //remove the loading overlay
   void removeLoadingOverlay() {
     overlay?.remove();
     overlay = null;
   }
 
+  //dispose of the loading overlay
   @override
   void dispose() {
     removeLoadingOverlay();
     super.dispose();
   }
 
+  //convert the datetime to a better format
   String convertToDateTime(DateTime DT){
-   // DT = DT.toLocal();
     return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    if (isLoading) { //show the loading overlay
       const String iconPath = 'assets/truck.svg';
       return Scaffold(
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Container(
-              //color: Colors.green.withOpacity(0.5),
                 alignment: Alignment.center,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -184,20 +180,18 @@ class _activeMerchantState extends State<activeMerchant> {
           ));
     }
 
+    //build the actual screen
     return Scaffold(
-      body: Center(
+      body: Center( //
         child: RefreshIndicator(
           edgeOffset: -100,
           displacement: 50,
           child: ListView.builder(
-            //padding: const EdgeInsets.all(8),
-
             itemCount: dbdata?.length,
             itemBuilder: (BuildContext context, int index) {
               return buildCard(index, expanded, dbdata);
             },
             physics: const AlwaysScrollableScrollPhysics(),
-            //separatorBuilder: (BuildContext context, int index) => const Divider(),
           ),
           onRefresh: () async {
             loadingOverlay();
@@ -214,8 +208,8 @@ class _activeMerchantState extends State<activeMerchant> {
 
   }
 
+  //create a card
   Card buildCard(int index, List<bool> expanded, dynamic data) {
-    //String subtitleText = "NOT EXPANDED";
     print(data[index]['job_status']);
     Color? cardColor;
     Color? textColor;
@@ -235,7 +229,6 @@ class _activeMerchantState extends State<activeMerchant> {
           padding: const EdgeInsetsDirectional.only(top: 8.0, bottom: 4.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Flexible(
                 flex: 2,
@@ -243,7 +236,7 @@ class _activeMerchantState extends State<activeMerchant> {
                   fit: BoxFit.fitWidth,
                   child: Column(
                     children : [
-                      //Text('${data[index]['pickup_time']}', textAlign: TextAlign.start, style: TextStyle( fontSize: 14 ),),
+                      //pickup date and time displayed on card
                       Text(convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textAlign: TextAlign.start, style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.bold),),
                     ],
                   ),
@@ -253,6 +246,7 @@ class _activeMerchantState extends State<activeMerchant> {
                 flex: 5,
                 child: Column(
                   children : [
+                    //goods type and pick up address displayed on card
                     Text('${data[index]['goods_type']}', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 20 ,fontWeight: FontWeight.bold),),
                     Text('${data[index]['pickup_address']}', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ),),
                   ],
@@ -264,11 +258,9 @@ class _activeMerchantState extends State<activeMerchant> {
                 flex: 2,
                 child: FittedBox(
                   fit: BoxFit.fitWidth,
-
                   child: Column(
-
                     children : [
-
+                      //job status displayed on card
                       if (data[index]['job_status'] == 'POSTED') ...[
                         Text('POSTED', textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16 ,fontWeight: FontWeight.bold),),
                       ]else if (data[index]['job_status'] == 'ACCEPTED') ...[
@@ -295,9 +287,8 @@ class _activeMerchantState extends State<activeMerchant> {
         ),
         onTap: () {
           print("TAPPED ${index}");
-          setState(() {
+          setState(() { //expand when tapped
             expanded[index] = !expanded[index];
-            //expanded[index]  == true ?  print("EXPANDED") : print("NOT EXPANDED");
           });
         },
         tileColor: cardColor,
@@ -305,7 +296,7 @@ class _activeMerchantState extends State<activeMerchant> {
     );
   }
 
-
+//create substring (expaneded card details)
   Column buildSubstring(int index, dynamic data) {
     if (expanded[index]  != true){
       return Column(
@@ -319,9 +310,7 @@ class _activeMerchantState extends State<activeMerchant> {
       cooling = data[index]['cooling_required'] == true ?  "Yes" :  "No";
 
       return Column(
-        //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //SizedBox(height: 10,),
           Divider( thickness: 1, color: textColor,),
           buildExpandedRow(data, index, 'Pickup Address', data[index]['pickup_address'].toString(), textColor),
           SizedBox(height: 5,),
@@ -353,8 +342,7 @@ class _activeMerchantState extends State<activeMerchant> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 FittedBox(
-                  //width: 100,
-                  child: ElevatedButton(
+                  child: ElevatedButton( //create button to cancel advert
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                     onPressed: () => { showDialog(
                         context: context,
@@ -421,8 +409,7 @@ class _activeMerchantState extends State<activeMerchant> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 FittedBox(
-                  //width: 100,
-                  child: ElevatedButton(
+                  child: ElevatedButton( //create button to start the delivery
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     onPressed: () => { showDialog(
                         context: context,
@@ -495,7 +482,7 @@ class _activeMerchantState extends State<activeMerchant> {
               children: <Widget>[
                 FittedBox(
                   //width: 100,
-                  child: ElevatedButton(
+                  child: ElevatedButton( //create button to confirm the start of the delivery
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     onPressed: () => { showDialog(
                         context: context,
@@ -519,7 +506,6 @@ class _activeMerchantState extends State<activeMerchant> {
                                                 child: ListBody(
                                                   children: <Widget>[
                                                     Text('Unable to confirm start of delivery.'),
-                                                    //Text('The selected Advertisement may have already started by the driver.'),
                                                     Text('Please refresh and try again.'),
                                                   ],
                                                 ),
@@ -565,19 +551,19 @@ class _activeMerchantState extends State<activeMerchant> {
               children: <Widget>[
                 FittedBox(
                   //width: 100,
-                  child: ElevatedButton(
+                  child: ElevatedButton( //create button to view proof of delivery
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     onPressed: () => { showDialog(
                         context: context,
                         builder: (BuildContext context) => AlertDialog(
                           title: const Text("Proof of Delivery"),
                           content: Column(mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                            const Text("The Driver has delivered the goods.\nView the proof of delivery and confirm it has been delivered."),
-                              const SizedBox(height: 10,),
-                              const Text('Signee\'s Name', style: TextStyle(fontSize: 15 ,fontWeight: FontWeight.bold),),
-                              Text(data[index]['signee_name'].toString(), style: TextStyle(fontSize: 15 ),),
-                          ]),
+                              children: <Widget>[
+                                const Text("The Driver has delivered the goods.\nView the proof of delivery and confirm it has been delivered."),
+                                const SizedBox(height: 10,),
+                                const Text('Signee\'s Name', style: TextStyle(fontSize: 15 ,fontWeight: FontWeight.bold),),
+                                Text(data[index]['signee_name'].toString(), style: TextStyle(fontSize: 15 ),),
+                              ]),
                           actions: <Widget>[
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
@@ -595,7 +581,6 @@ class _activeMerchantState extends State<activeMerchant> {
                                                 child: ListBody(
                                                   children: <Widget>[
                                                     Text('Unable to confirm delivery of goods.'),
-                                                    //Text('The selected Advertisement may have already started by the driver.'),
                                                     Text('Please refresh and try again.'),
                                                   ],
                                                 ),
@@ -641,9 +626,9 @@ class _activeMerchantState extends State<activeMerchant> {
     }
   }
 
+  //build contents of each row in the expanded list
   Row buildExpandedRow(data, int index, String leftText, String rightText, Color textColor) {
     return Row(
-      //mainAxisAlignment: MainAxisAlignment.,
       children: <Widget>[
         Expanded(
             child: Align(

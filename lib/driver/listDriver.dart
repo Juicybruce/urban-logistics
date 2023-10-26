@@ -5,31 +5,30 @@ import '../constants.dart';
 import '../navBar.dart';
 import 'package:intl/intl.dart';
 
+// list of avaliable jobs posted by merchant
 class listDriver extends StatefulWidget {
   const listDriver({Key? key}) : super(key: key);
 
   @override
   State<listDriver> createState() => _listDriverState();
 }
-// list of avaliable jobs posted by merchant
 
 class _listDriverState extends State<listDriver> {
-  bool isLoading = false;
-  late List<bool> expanded;
-  String? userID;
-  User? user;
-  late List<dynamic>? dbdata;
+  bool isLoading = false; //if loading screen is displayed
+  late List<bool> expanded; //list of bools, for displaying expanded information, or not
+  String? userID; //user id
+  User? user; //user details
+  late List<dynamic>? dbdata; //data from the database
 
   void initState() {
     isLoading = true;
     user = supabase.auth.currentUser;
-    //email = user?.email;
     userID = user?.id;
-
     getHistory();
     super.initState();
   }
 
+  //get jobs details from database
   Future<void> getHistory() async {
     await Future.delayed(const Duration(seconds: 0));
     var response = await supabase
@@ -37,7 +36,6 @@ class _listDriverState extends State<listDriver> {
         .select('*, suppliers:supplier_id(first_name, last_name, business_name, contact_phone)')
         .eq ('job_status', 'POSTED')
         .order('pickup_time', ascending: false); //TODO: Order by job date or something like
-    //print(response[0]["drivers"]["first_name"]);
     dbdata = response as List<dynamic>;
     expanded = List<bool>.filled(dbdata!.length, false);
     setState(() {
@@ -46,8 +44,8 @@ class _listDriverState extends State<listDriver> {
     removeLoadingOverlay();
   }
 
+  //accept a job
   Future<void> acceptJob(String jobID) async {
-    //await Future.delayed(const Duration(seconds: 0));
     await supabase
         .from('advertisments')
         .update({'driver_id':  userID, 'job_status':  'ACCEPTED'})
@@ -55,15 +53,14 @@ class _listDriverState extends State<listDriver> {
     getHistory();
   }
 
+  //gets currently accepted jobs and checks if they conflict with the new job
   Future<bool> getJobs(DateTime start, DateTime end) async {
-    //await Future.delayed(const Duration(seconds: 0));
     final response = await supabase
         .from('advertisments')
         .select('pickup_time, delivery_time')
         .neq('job_status', 'CANCELLED')
         .neq('job_status', 'COMPLETE')
         .eq('driver_id', userID);
-    //print(response);
     if (response.length == 0) {
       return true;
     } else {
@@ -86,8 +83,8 @@ class _listDriverState extends State<listDriver> {
             (sA < eJ && eJ < eA) ||
             (sJ < sA && sA < eJ) ||
             (sJ < eA && eA < eJ) ||
-            (sA == sJ && eA == eJ)) { // conditions need to be set so if true it returns false
-        return false;
+            (sA == sJ && eA == eJ)) { //test conditions to make sure it doesnt conflict
+          return false;
         }
       }
       return true;
@@ -96,7 +93,7 @@ class _listDriverState extends State<listDriver> {
 
 
   OverlayEntry? overlay;
-
+//display loading overlay
   void loadingOverlay(){
     const String iconPath = 'assets/truck.svg';
     overlay = OverlayEntry(
@@ -132,25 +129,28 @@ class _listDriverState extends State<listDriver> {
     Overlay.of(context, debugRequiredFor: widget).insert(overlay!);
   }
 
+  //remove loading overlay
   void removeLoadingOverlay() {
     overlay?.remove();
     overlay = null;
   }
 
+  //convert datetime to useable string
   String convertToDateTime(DateTime DT){
-    DT = DT.toLocal();
     return DateFormat('dd-MM-yyyy\nHH:mm').format(DT);
   }
 
+  //dispose of overlay
   @override
   void dispose() {
     removeLoadingOverlay();
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    if (isLoading) { //show loading screen
       const String iconPath = 'assets/truck.svg';
       return Scaffold(
           body: Padding(
@@ -179,21 +179,18 @@ class _listDriverState extends State<listDriver> {
           ));
     }
 
-
+//show available jobs
     return Scaffold(
       body: Center(
         child: RefreshIndicator(
           edgeOffset: -100,
           displacement: 50,
           child: ListView.builder(
-            //padding: const EdgeInsets.all(8),
-
             itemCount: dbdata?.length,
             itemBuilder: (BuildContext context, int index) {
               return buildCard(index, expanded, dbdata);
             },
             physics: const AlwaysScrollableScrollPhysics(),
-            //separatorBuilder: (BuildContext context, int index) => const Divider(),
           ),
           onRefresh: () async {
             loadingOverlay();
@@ -207,11 +204,10 @@ class _listDriverState extends State<listDriver> {
         ),
       ),
     );
-
   }
 
+  //create cards for list items
   Card buildCard(int index, List<bool> expanded, dynamic data) {
-    //String subtitleText = "NOT EXPANDED";
     print(data[index]['job_status']);
     Color? cardColor = ColorConstants.driverListColor;
     Color? textColor = Colors.white;
@@ -228,18 +224,18 @@ class _listDriverState extends State<listDriver> {
                 child: FittedBox(
                   fit: BoxFit.fitWidth,
                   child: Column(
-                    children : [
+                    children : [//show pickup date time
                       if (data[index]['pickup_time'] != null)...[
-                      Text(convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textAlign: TextAlign.start, style: TextStyle( fontSize: 16, fontWeight: FontWeight.bold, color: textColor),),
-      ]
-      ],
+                        Text(convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textAlign: TextAlign.start, style: TextStyle( fontSize: 16, fontWeight: FontWeight.bold, color: textColor),),
+                      ]
+                    ],
                   ),
                 ),
               ),
               Flexible(
                 flex: 5,
                 child: Column(
-                  children : [
+                  children : [ //show goods and pickup address
                     Text('${data[index]['goods_type']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 20 ,fontWeight: FontWeight.bold, color: textColor),),
                     Text('${data[index]['pickup_address']}', textAlign: TextAlign.center, style: TextStyle( fontSize: 16 , color: textColor),),
                   ],
@@ -250,7 +246,7 @@ class _listDriverState extends State<listDriver> {
                 child: FittedBox(
                   fit: BoxFit.fitWidth,
                   child: Column(
-                    children : [
+                    children : [ //show job status
                       Text('${data[index]['job_status']}', textAlign: TextAlign.end, style: TextStyle( fontSize: 16 ,fontWeight: FontWeight.bold, color: textColor),),
                     ],
                   ),
@@ -265,9 +261,8 @@ class _listDriverState extends State<listDriver> {
         ),
         onTap: () {
           print("TAPPED ${index}");
-          setState(() {
+          setState(() { //if displaying expanded information or not
             expanded[index] = !expanded[index];
-            //expanded[index]  == true ?  print("EXPANDED") : print("NOT EXPANDED");
           });
         },
         tileColor: cardColor,
@@ -275,22 +270,19 @@ class _listDriverState extends State<listDriver> {
     );
   }
 
+  //create expanded information string
   Column buildSubstring(int index, dynamic data) {
     if (expanded[index]  != true){
       return Column(
         children: [
-          // Text("..."),
         ],
       );
     } else {
       String cooling = "";
       cooling = data[index]['cooling_required'] == true ? "Yes" : "No";
-      //Color? textColor = data[index]['job_status']  == 'COMPLETE' ? Colors.black : Colors.black;
       Color? textColor = Colors.white;
       return Column(
-        //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //SizedBox(height: 10,),
           Divider( thickness: 1, color: textColor,),
           buildExpandedRow(data, index, 'Merchant Name', '${data[index]['suppliers']['first_name']} ${data[index]['suppliers']['last_name']}', textColor),
           buildExpandedRow(data, index, 'Business Name', data[index]['suppliers']['business_name'].toString(), textColor),
@@ -300,12 +292,12 @@ class _listDriverState extends State<listDriver> {
           SizedBox(height: 5,),
           buildExpandedRow(data, index, 'Delivery Address', data[index]['dropoff_address'].toString(), textColor),
           buildExpandedRow(data, index, 'Distance', "${data[index]['distance']} Km", textColor),
-    if (data[index]['pickup_time'] != null)...[
-          buildExpandedRow(data, index, 'Collection Time', convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textColor),
-    ],
+          if (data[index]['pickup_time'] != null)...[
+            buildExpandedRow(data, index, 'Collection Time', convertToDateTime(DateTime.parse(data[index]['pickup_time'].toString())), textColor),
+          ],
           SizedBox(height: 5,),
-    if (data[index]['delivery_time'] != null)...[
-          buildExpandedRow(data, index, 'Delivery Time', convertToDateTime(DateTime.parse(data[index]['delivery_time'].toString())), textColor),
+          if (data[index]['delivery_time'] != null)...[
+            buildExpandedRow(data, index, 'Delivery Time', convertToDateTime(DateTime.parse(data[index]['delivery_time'].toString())), textColor),
           ],
           SizedBox(height: 10,),
           buildExpandedRow(data, index, 'Goods', data[index]['goods_type'].toString(), textColor),
@@ -322,8 +314,7 @@ class _listDriverState extends State<listDriver> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               FittedBox(
-                //width: 100,
-                child: ElevatedButton(
+                child: ElevatedButton( //create accept advertisement button
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                   onPressed: () => { showDialog(
                       context: context,
@@ -363,16 +354,15 @@ class _listDriverState extends State<listDriver> {
                                     },
                                   );
                                 } else {
-                                  //loadingOverlay();
                                   bool res = await getJobs(DateTime.parse(data[index]['pickup_time'].toString()), DateTime.parse(data[index]['delivery_time'].toString()));
                                   print(res);
                                   if(res){
-                                setState(() {
-                                 acceptJob('${data[index]['job_id']}');
-                                 getHistory();
-                                  print("IVE BEEN ACCEPTED");
-                                });
-                                } else {
+                                    setState(() {
+                                      acceptJob('${data[index]['job_id']}');
+                                      getHistory();
+                                      print("IVE BEEN ACCEPTED");
+                                    });
+                                  } else {
                                     Future.delayed(Duration.zero, () => showDialog<void>(
                                       context: context,
                                       barrierDismissible: false, // user must tap button!
@@ -399,12 +389,10 @@ class _listDriverState extends State<listDriver> {
                                       },
                                     )
                                     );
-                               // print("ERRRO");
-                                }
-                                 Navigator.of(context).pop();
+                                  }
+                                  Navigator.of(context).pop();
                                 }
                               }, child: const Text("Accept")),
-
                           TextButton(onPressed: (){
                             Navigator.of(context).pop();
                           }, child: const Text("Cancel")),
@@ -422,6 +410,7 @@ class _listDriverState extends State<listDriver> {
     }
   }
 
+  //build row information for expanded card details
   Row buildExpandedRow(data, int index, String leftText, String rightText, Color textColor) {
     return Row(
       //mainAxisAlignment: MainAxisAlignment.,

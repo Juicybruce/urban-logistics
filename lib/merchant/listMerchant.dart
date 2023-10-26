@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 import '../constants.dart';
 
+//display a list of active drivers for the merchants
 class listMerchant extends StatefulWidget {
   const listMerchant({Key? key}) : super(key: key);
 
@@ -12,22 +12,21 @@ class listMerchant extends StatefulWidget {
 }
 
 class _listMerchantState extends State<listMerchant> {
-  bool isLoading = false;
-  late List<bool> expanded;
-  String? userID;
-  User? user;
-  late List<dynamic>? dbdata;
+  bool isLoading = false; //for the loading screen
+  late List<bool> expanded; //list of bools, for displaying expanded information, or not
+  String? userID; //user ID
+  User? user; //user details
+  late List<dynamic>? dbdata; //data from the database
 
   void initState() {
     isLoading = true;
     user = supabase.auth.currentUser;
-    //email = user?.email;
     userID = user?.id;
-
     getDrivers();
     super.initState();
   }
 
+  //get a list of active drivers
   Future<void> getDrivers() async {
     await Future.delayed(const Duration(seconds: 0));
     var response = await supabase
@@ -35,11 +34,8 @@ class _listMerchantState extends State<listMerchant> {
         .select('*, trucks!drivers_current_vehicle_fkey(*)')
         .eq('available', true);
     //.order('job_id', ascending: false); //TODO: Order by closest or something like
-    //print(response);
     dbdata = response as List<dynamic>;
     expanded = List<bool>.filled(dbdata!.length, false);
-    //print("TEST1  ${dbdata?[0]['job_status']}");
-    //print("TEST1  ${dbdata?[1]}");
     setState(() {
       isLoading = false;
     });
@@ -48,6 +44,7 @@ class _listMerchantState extends State<listMerchant> {
 
   OverlayEntry? overlay;
 
+  //display loading overlay
   void loadingOverlay() {
     const String iconPath = 'assets/truck.svg';
     overlay = OverlayEntry(builder: (BuildContext context) {
@@ -56,7 +53,6 @@ class _listMerchantState extends State<listMerchant> {
           body: Padding(
             padding: const EdgeInsets.all(0),
             child: Container(
-                //color: Colors.green.withOpacity(0.5),
                 alignment: Alignment.center,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -64,7 +60,7 @@ class _listMerchantState extends State<listMerchant> {
                     SvgPicture.asset(
                       iconPath,
                       colorFilter:
-                          ColorFilter.mode(Colors.pinkAccent, BlendMode.srcIn),
+                      ColorFilter.mode(Colors.pinkAccent, BlendMode.srcIn),
                       semanticsLabel: 'Truck Icon',
                     ),
                     const SizedBox(height: 20),
@@ -81,48 +77,51 @@ class _listMerchantState extends State<listMerchant> {
     Overlay.of(context, debugRequiredFor: widget).insert(overlay!);
   }
 
+  //remove loading overlay
   void removeLoadingOverlay() {
     overlay?.remove();
     overlay = null;
   }
 
+  //dispose of overlay
   @override
   void dispose() {
-    // Make sure to remove OverlayEntry when the widget is disposed.
     removeLoadingOverlay();
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    if (isLoading) { //show the loading screen
       const String iconPath = 'assets/truck.svg';
       return Scaffold(
           body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  iconPath,
-                  colorFilter:
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      iconPath,
+                      colorFilter:
                       ColorFilter.mode(Colors.pinkAccent, BlendMode.srcIn),
-                  semanticsLabel: 'Truck Icon',
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Urban Logistics',
-                  style: TextStyle(fontSize: 40),
-                ),
-                const SizedBox(height: 20),
-                CircularProgressIndicator()
-              ],
-            )),
-      ));
+                      semanticsLabel: 'Truck Icon',
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Urban Logistics',
+                      style: TextStyle(fontSize: 40),
+                    ),
+                    const SizedBox(height: 20),
+                    CircularProgressIndicator()
+                  ],
+                )),
+          ));
     }
 
+    //build the list of drivers
     return Scaffold(
       body: Center(
         child: RefreshIndicator(
@@ -148,13 +147,12 @@ class _listMerchantState extends State<listMerchant> {
     );
   }
 
+  //create each card on the list
   Card buildCard(int index, List<bool> expanded, dynamic data) {
-    //String subtitleText = "NOT EXPANDED";
     print(data[index]['job_status']);
     Color? cardColor = ColorConstants.merchantListColor;
     return Card(
       child: ListTile(
-        //leading: Icon(Icons.fire_truck_outlined, size: 50,),
         title: Padding(
           padding: const EdgeInsetsDirectional.only(top: 2.0),
           child: Column(
@@ -174,9 +172,8 @@ class _listMerchantState extends State<listMerchant> {
         ),
         onTap: () {
           print("TAPPED ${index}");
-          setState(() {
+          setState(() { //expand the list tile
             expanded[index] = !expanded[index];
-            //expanded[index]  == true ?  print("EXPANDED") : print("NOT EXPANDED");
           });
         },
         tileColor: cardColor,
@@ -184,6 +181,7 @@ class _listMerchantState extends State<listMerchant> {
     );
   }
 
+  //get the license plate details
   Text buildDriverLicense_plate(data, int index) {
     if (data[index]['trucks'] != null) {
       return Text(
@@ -200,19 +198,17 @@ class _listMerchantState extends State<listMerchant> {
     }
   }
 
+  //build the details of the expended list
   Column buildSubstring(int index, dynamic data) {
     if (expanded[index] != true) {
       return Column(
         children: [
-          // Text("..."),
         ],
       );
-    } else {
+    } else { //if expanded show details
       Color? textColor =
-          data[index]['job_status'] == 'POSTED' ? Colors.white : Colors.black;
+      data[index]['job_status'] == 'POSTED' ? Colors.white : Colors.black;
       return Column(
-
-        //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Divider( thickness: 1, color: textColor,),
           buildExpandedRow(data, index, 'Distance',
@@ -221,8 +217,6 @@ class _listMerchantState extends State<listMerchant> {
               data[index]['contactnumber'].toString(), textColor),
           buildExpandedRow(data, index, 'Experience',
               '${data[index]['delivery_experience']} Years', textColor),
-          //buildExpandedRow(data, index, 'Rating',
-              //data[index]['average_rating'].toString(), textColor),
           if (data[index]['company_name'] != null) ...[
             buildExpandedRow(data, index, 'Pickup Company',
                 data[index]['company_name'].toString(), textColor),
@@ -254,10 +248,10 @@ class _listMerchantState extends State<listMerchant> {
     }
   }
 
+  //build each element on the extended list
   Row buildExpandedRow(
       data, int index, String leftText, String rightText, Color textColor) {
     return Row(
-      //mainAxisAlignment: MainAxisAlignment.,
       children: <Widget>[
         Expanded(
             child: Align(

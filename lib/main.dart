@@ -7,6 +7,8 @@ import 'pages/register_merchant_page.dart';
 import 'constants.dart';
 import 'navBar.dart';
 
+
+//entry point of the app
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Supabase.initialize(
@@ -46,7 +48,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// add truck page that has a form to add a truck in a diloge box with a button to add a truck to the database
+// add truck page that has a form to add a truck in a dialogue box with a button to add a truck to the database
 
 class AddTruck extends StatefulWidget {
   const AddTruck({super.key});

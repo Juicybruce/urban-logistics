@@ -1,21 +1,3 @@
-/*import 'package:flutter/material.dart';
-class mapMerchant extends StatefulWidget {
-  const mapMerchant({Key? key}) : super(key: key);
-
-  @override
-  State<mapMerchant> createState() => _mapMerchantState();
-}
-
-class _mapMerchantState extends State<mapMerchant> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Merchant Map Screen'),
-      ),
-    );
-  }
-}*/
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
